@@ -1,0 +1,27 @@
+server:
+  port: 8888  # Cổng của Gateway
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # Route 1: Dẫn đến Anime Service
+        - id: anime-service-route
+          # lb:// nghĩa là Load Balancer (tự động tìm service trong Eureka)
+          uri: lb://ANIME-SERVICE
+          predicates:
+            # Nếu user gọi localhost:8888/api/anime/... thì đẩy sang Anime Service
+            - Path=/api/anime/** # (Bạn có thể thêm các path khác nếu service bạn có nhiều API)
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.netty: DEBUG
