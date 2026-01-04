@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -10,16 +10,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, UploadCloud, X, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { createProduct, fetchManufacturers, fetchSeries, fetchCategories, uploadImage } from '../../services/productService';
 
 const formSchema = z.object({
   name: z.string().min(5, "Product name must be at least 5 characters"),
-  series: z.string().min(2, "Series is required"),
-  manufacturer: z.string().min(2, "Manufacturer is required"),
-  condition: z.string().min(1, "Please select a condition"),
-  price: z.preprocess((a) => parseInt(z.string().parse(a), 10), z.number().gte(1, "Price must be at least $1")),
+  condition: z.string().min(1, "Condition is required"),
+  priceMarket: z.preprocess((a) => parseInt(z.string().parse(a), 10), z.number().gte(1, "Price must be at least $1")),
   description: z.string().min(10, "Please provide a detailed description"),
+  manufacturerId: z.string().min(1, "Manufacturer is required"),
+  seriesId: z.string().optional(),
+  categoryId: z.string().min(1, "Category is required"),
+  slug: z.string().min(1, "Slug is required"),
+  scale: z.string().optional(),
+  height: z.preprocess((a) => a ? parseFloat(z.string().parse(a)) : undefined, z.number().optional()),
+  material: z.string().optional(),
+  isReleased: z.boolean().default(true),
 });
 
 const SellerUploadPage = () => {
@@ -28,18 +36,61 @@ const SellerUploadPage = () => {
     const [isAiChecking, setIsAiChecking] = useState(false);
     const [aiResult, setAiResult] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-  
+    
+    // Dropdown Data States
+    const [manufacturers, setManufacturers] = useState([]);
+    const [seriesList, setSeriesList] = useState([]);
+    const [categories, setCategories] = useState([]);
+
     const form = useForm({
       resolver: zodResolver(formSchema),
       defaultValues: {
         name: "",
-        series: "",
-        manufacturer: "",
-        condition: "",
-        price: "",
+        priceMarket: "",
         description: "",
+        manufacturerId: "",
+        seriesId: "",
+        categoryId: "",
+        slug: "",
+        scale: "",
+        height: "",
+        material: "",
+        condition: "New",
+        isReleased: true,
       },
     });
+
+    // Generate slug from name
+    const watchName = form.watch("name");
+    useEffect(() => {
+        if (watchName) {
+            const slug = watchName.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)+/g, '');
+            form.setValue("slug", slug);
+        }
+    }, [watchName, form]);
+
+
+
+    // Load initial data
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const [mfgData, seriesData, catData] = await Promise.all([
+                    fetchManufacturers(),
+                    fetchSeries(),
+                    fetchCategories()
+                ]);
+                setManufacturers(mfgData || []);
+                setSeriesList(seriesData || []);
+                setCategories(catData || []);
+            } catch (err) {
+                console.error("Error loading dropdown data", err);
+            }
+        };
+        loadData();
+    }, []);
 
     const onDrop = useCallback((acceptedFiles) => {
         // Mock creating object URLs for preview
@@ -82,11 +133,43 @@ const SellerUploadPage = () => {
           return;
       }
       setIsSubmitting(true);
-      // Simulate API submission
-      setTimeout(() => {
+      
+      try {
+          // 1. Upload Images First
+          const imageUploadPromises = images.map(file => uploadImage(file));
+          const uploadedUrls = await Promise.all(imageUploadPromises);
+
+          // 2. Prepare Payload with real URLs
+          const payload = {
+              name: values.name,
+              priceMarket: values.priceMarket,
+              description: `[Condition: ${values.condition}] ${values.description}`, // Append condition to description since backend has no field
+              manufacturerId: parseInt(values.manufacturerId),
+              categoryId: parseInt(values.categoryId),
+              seriesId: values.seriesId && values.seriesId !== "null" ? parseInt(values.seriesId) : null,
+              slug: values.slug,
+              scale: values.scale,
+              height: values.height,
+              material: values.material,
+              isReleased: values.isReleased,
+              releaseDate: new Date().toISOString().split('T')[0],
+              
+              images: uploadedUrls.map((url, index) => ({
+                  imageUrl: url,
+                  isThumbnail: index === 0, // First image is thumbnail
+                  type: "FRONT" // Default type
+              }))
+          };
+
+          // 3. Create Product
+          await createProduct(payload);
+          navigate('/'); 
+      } catch (error) {
+          console.error("Submission failed", error);
+          alert("Failed to create listing: " + error.message);
+      } finally {
         setIsSubmitting(false);
-        navigate('/');
-      }, 2000);
+      }
     }
 
   return (
@@ -134,6 +217,11 @@ const SellerUploadPage = () => {
                                >
                                    <X className="h-3 w-3" />
                                </button>
+                               {index === 0 && (
+                                   <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[10px] text-center py-1">
+                                       Thumbnail
+                                   </div>
+                               )}
                            </div>
                        ))}
                    </div>
@@ -201,12 +289,81 @@ const SellerUploadPage = () => {
 
               <FormField
                 control={form.control}
-                name="series"
+                name="categoryId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Series</FormLabel>
+                    <FormLabel>Category</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                             <SelectItem key={cat.id} value={String(cat.id)}>{cat.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="manufacturerId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Manufacturer</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select manufacturer" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {manufacturers.map((mfg) => (
+                             <SelectItem key={mfg.id} value={String(mfg.id)}>{mfg.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="seriesId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Series (Optional)</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select series" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {seriesList.map((series) => (
+                             <SelectItem key={series.id} value={String(series.id)}>{series.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="priceMarket"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Market Price ($USD)</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. One Piece" {...field} />
+                      <Input type="number" placeholder="0.00" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -215,19 +372,61 @@ const SellerUploadPage = () => {
 
               <FormField
                 control={form.control}
-                name="manufacturer"
+                name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Manufacturer</FormLabel>
+                    <FormLabel>Slug (Auto-generated)</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. Bandai Spirits" {...field} />
+                      <Input placeholder="product-slug" {...field} readOnly className="bg-muted" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="scale"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Scale (e.g. 1/7)</FormLabel>
+                    <FormControl>
+                      <Input placeholder="1/7" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-               <FormField
+              <FormField
+                control={form.control}
+                name="height"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Height (cm)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="25.5" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="material"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Material</FormLabel>
+                    <FormControl>
+                      <Input placeholder="PVC, ABS" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
                 control={form.control}
                 name="condition"
                 render={({ field }) => (
@@ -240,10 +439,10 @@ const SellerUploadPage = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="new">New (Sealed)</SelectItem>
-                        <SelectItem value="like-new">Like New (Open Box)</SelectItem>
-                        <SelectItem value="good">Good (Minor Display Wear)</SelectItem>
-                        <SelectItem value="fair">Fair (Visible Wear/No Box)</SelectItem>
+                        <SelectItem value="New">New / Sealed</SelectItem>
+                        <SelectItem value="Like New">Like New (Opened)</SelectItem>
+                        <SelectItem value="Used">Used / Displayed</SelectItem>
+                        <SelectItem value="Damaged">Damaged / Missing Parts</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -253,18 +452,27 @@ const SellerUploadPage = () => {
 
               <FormField
                 control={form.control}
-                name="price"
+                name="isReleased"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price ($USD)</FormLabel>
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
                     <FormControl>
-                      <Input type="number" placeholder="0.00" {...field} />
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        Already Released?
+                      </FormLabel>
+                      <FormDescription>
+                        Uncheck if this is a pre-order item.
+                      </FormDescription>
+                    </div>
                   </FormItem>
                 )}
               />
-
+              
               <FormField
                 control={form.control}
                 name="description"

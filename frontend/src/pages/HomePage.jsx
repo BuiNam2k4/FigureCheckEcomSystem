@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 // import { products } from '../data/mockData';
 import { fetchProducts } from '../services/productService';
 import ProductCard from '../components/products/ProductCard';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Moon, Sun } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../components/theme-provider';
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -45,6 +47,17 @@ const HomePage = () => {
     <div className="space-y-12 pb-12">
       {/* Hero Section */}
       <section className="relative bg-muted/40 py-20 px-4 md:px-6 lg:py-32 overflow-hidden">
+        <div className="absolute top-4 right-4 z-20">
+            <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="rounded-full"
+            >
+                {theme === "dark" ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
+                <span className="sr-only">Toggle theme</span>
+            </Button>
+        </div>
         <div className="container relative z-10 flex flex-col items-center text-center space-y-6 max-w-4xl mx-auto">
           <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80 mb-4">
              <ShieldCheck className="w-3 h-3 mr-1" />

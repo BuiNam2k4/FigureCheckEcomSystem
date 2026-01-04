@@ -11,6 +11,10 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
+  username: z.string().min(4, "Username must be at least 4 characters"),
+  dob: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Invalid date of birth",
+  }),
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
@@ -26,11 +30,14 @@ const RegisterPage = () => {
     const { register: registerUser } = useAuth();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
   
     const form = useForm({
       resolver: zodResolver(formSchema),
       defaultValues: {
         fullName: "",
+        username: "",
+        dob: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -40,11 +47,27 @@ const RegisterPage = () => {
   
     async function onSubmit(values) {
       setIsLoading(true);
+      setError("");
       try {
-        await registerUser(values);
+        // Assume full name is split into first and last name for simplicty
+        const names = values.fullName.split(" ");
+        const firstName = names[0];
+        const lastName = names.slice(1).join(" ") || "";
+
+        const payload = {
+            username: values.username,
+            password: values.password,
+            email: values.email,
+            firstName: firstName,
+            lastName: lastName,
+            dob: values.dob 
+        };
+        
+        await registerUser(payload);
         navigate('/login');
       } catch (error) {
         console.error("Registration failed", error);
+        setError(error.message || "Registration failed. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -87,6 +110,30 @@ const RegisterPage = () => {
             </p>
           </div>
 
+          {error && (
+            <div className="p-3 rounded-md bg-red-500/15 text-red-500 text-sm flex items-center gap-2 mb-4">
+                <div role="alert" className="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-4 w-4"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" x2="12" y1="8" y2="12" />
+                      <line x1="12" x2="12.01" y1="16" y2="16" />
+                    </svg>
+                    <span>{error}</span>
+                </div>
+            </div>
+          )}
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -97,6 +144,32 @@ const RegisterPage = () => {
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
                       <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="johndoe123" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="dob"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date of Birth</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

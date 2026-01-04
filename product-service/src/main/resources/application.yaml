@@ -21,3 +21,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dhz3ngdeg}
+  api-key: ${CLOUDINARY_API_KEY:416376455625773}
+  api-secret: ${CLOUDINARY_API_SECRET:1ALNNm10-bDmv41SFM_20J-5H3A}

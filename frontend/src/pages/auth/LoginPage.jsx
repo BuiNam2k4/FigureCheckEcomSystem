@@ -11,7 +11,7 @@ import { Eye, EyeOff, Mail } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
+  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
   password: z.string().min(1, { message: "Password is required" }),
 });
 
@@ -20,22 +20,31 @@ const LoginPage = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
   
     const form = useForm({
       resolver: zodResolver(formSchema),
       defaultValues: {
-        email: "",
+        username: "",
         password: "",
       },
     });
   
     async function onSubmit(values) {
       setIsLoading(true);
+      setError("");
       try {
-        await login(values.email, values.password);
-        navigate('/');
+        const result = await login(values.username, values.password);
+        if (result && result.success) {
+            if (result.isAdmin) {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
+        }
       } catch (error) {
         console.error("Login failed", error);
+        setError(error.message || "Invalid username or password");
       } finally {
         setIsLoading(false);
       }
@@ -79,6 +88,30 @@ const LoginPage = () => {
             </p>
           </div>
 
+          {error && (
+            <div className="p-3 rounded-md bg-red-500/15 text-red-500 text-sm flex items-center gap-2">
+                <div role="alert" className="flex items-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-4 w-4"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" x2="12" y1="8" y2="12" />
+                      <line x1="12" x2="12.01" y1="16" y2="16" />
+                    </svg>
+                    <span>{error}</span>
+                </div>
+            </div>
+          )}
+
           <Button variant="outline" className="w-full" type="button">
             {/* Google Icon SVG */}
             <svg role="img" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
@@ -102,12 +135,12 @@ const LoginPage = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="name@example.com" {...field} />
+                      <Input placeholder="Enter username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
