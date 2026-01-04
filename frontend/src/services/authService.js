@@ -1,6 +1,6 @@
 export const login = async (username, password) => {
   try {
-    const response = await fetch('http://localhost:8082/identity/auth/token', {
+    const response = await fetch('http://localhost:8888/identity/auth/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ export const login = async (username, password) => {
 
 export const getMyInfo = async (token) => {
     try {
-      const response = await fetch('http://localhost:8082/identity/users/my-info', {
+      const response = await fetch('http://localhost:8888/identity/users/my-info', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -44,7 +44,7 @@ export const getMyInfo = async (token) => {
 
 export const register = async (userData) => {
     try {
-        const response = await fetch('http://localhost:8082/identity/users', {
+        const response = await fetch('http://localhost:8888/identity/users', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

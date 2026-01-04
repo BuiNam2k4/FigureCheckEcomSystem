@@ -6,14 +6,29 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
       routes:
-        # Route 1: Dẫn đến Anime Service
-        - id: anime-service-route
-          # lb:// nghĩa là Load Balancer (tự động tìm service trong Eureka)
-          uri: lb://ANIME-SERVICE
+        # Route: Identity Service
+        - id: identity-service-route
+          uri: lb://IDENTITY-SERVICE
           predicates:
-            # Nếu user gọi localhost:8888/api/anime/... thì đẩy sang Anime Service
-            - Path=/api/anime/** # (Bạn có thể thêm các path khác nếu service bạn có nhiều API)
+            - Path=/identity/**
+
+        # Route: Product Service
+        - id: product-service-route
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/**
 
 eureka:
   client:

@@ -1,6 +1,6 @@
 export const fetchProducts = async () => {
   try {
-    const response = await fetch('http://localhost:8083/api/products');
+    const response = await fetch('http://localhost:8888/api/products');
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
@@ -20,7 +20,7 @@ export const fetchProducts = async () => {
 
 export const fetchProductById = async (id) => {
   try {
-    const response = await fetch(`http://localhost:8083/api/products/${id}`);
+    const response = await fetch(`http://localhost:8888/api/products/${id}`);
     if (!response.ok) {
         if (response.status === 404) {
             return null; 
@@ -37,7 +37,7 @@ export const fetchProductById = async (id) => {
 
 export const createProduct = async (productData) => {
   try {
-    const response = await fetch('http://localhost:8083/api/products', {
+    const response = await fetch('http://localhost:8888/api/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const createProduct = async (productData) => {
 
 export const fetchManufacturers = async () => {
     try {
-        const response = await fetch('http://localhost:8083/api/manufacturers');
+        const response = await fetch('http://localhost:8888/api/manufacturers');
         if (!response.ok) throw new Error('Failed to fetch manufacturers');
         const data = await response.json();
         return data.result;
@@ -71,7 +71,7 @@ export const fetchManufacturers = async () => {
 
 export const fetchSeries = async () => {
     try {
-        const response = await fetch('http://localhost:8083/api/series');
+        const response = await fetch('http://localhost:8888/api/series');
         if (!response.ok) throw new Error('Failed to fetch series');
         const data = await response.json();
         return data.result;
@@ -83,7 +83,7 @@ export const fetchSeries = async () => {
 
 export const fetchCategories = async () => {
     try {
-        const response = await fetch('http://localhost:8083/api/categories');
+        const response = await fetch('http://localhost:8888/api/categories');
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         return data.result;
@@ -98,7 +98,7 @@ export const uploadImage = async (file) => {
     formData.append('file', file);
 
     try {
-        const response = await fetch('http://localhost:8083/api/products/upload', {
+        const response = await fetch('http://localhost:8888/api/products/upload', {
             method: 'POST',
             body: formData,
         });

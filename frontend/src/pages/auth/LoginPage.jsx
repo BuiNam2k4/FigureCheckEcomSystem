@@ -32,7 +32,7 @@ const LoginPage = () => {
   
     async function onSubmit(values) {
       setIsLoading(true);
-      setError("");
+      // Removed setError("") to prevent UI shake/layout shift while loading
       try {
         const result = await login(values.username, values.password);
         if (result && result.success) {
