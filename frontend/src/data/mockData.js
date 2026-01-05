@@ -149,4 +149,18 @@ export const products = [
       analyzedAt: "2024-03-08T13:20:00Z",
     },
   },
+
+];
+
+export const userCart = [
+  {
+    id: "c1",
+    product: products[0], // One Piece Luffy
+    addedAt: "2024-03-20T10:00:00Z",
+  },
+  {
+    id: "c2",
+    product: products[1], // Evangelion Asuka
+    addedAt: "2024-03-21T14:30:00Z",
+  },
 ];

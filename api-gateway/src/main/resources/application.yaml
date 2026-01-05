@@ -29,6 +29,10 @@ spring:
           uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/api/**
+        - id: trade-service-route
+          uri: lb://TRADE-SERVICE
+          predicates:
+            - Path=/api/**
 
 eureka:
   client:

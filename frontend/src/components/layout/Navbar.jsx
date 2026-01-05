@@ -86,10 +86,12 @@ const Navbar = () => {
           </Link>
 
           <div className="relative">
+            <Link to="/cart">
              <Button variant="ghost" size="icon">
                 <ShoppingBag className="h-5 w-5" />
                 {/* Badge could go here */}
              </Button>
+             </Link>
           </div>
 
           {user ? (
