@@ -12,7 +12,7 @@ import vn.kurisu.tradeservice.entity.OrderItem;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-01-05T19:52:16+0700",
+    date = "2026-01-05T20:13:26+0700",
     comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251118-1623, environment: Java 21.0.9 (Eclipse Adoptium)"
 )
 @Component

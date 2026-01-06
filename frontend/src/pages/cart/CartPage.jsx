@@ -82,8 +82,10 @@ const CartPage = () => {
                         <span>${total.toFixed(2)}</span>
                     </div>
                     
-                    <Button className="w-full text-base py-6 mt-4">
-                        Proceed to Checkout
+                    <Button className="w-full text-base py-6 mt-4" asChild>
+                        <Link to="/checkout">
+                            Proceed to Checkout
+                        </Link>
                     </Button>
                     
                     <div className="text-xs text-center text-muted-foreground mt-4">

@@ -10,4 +10,5 @@ public interface OrderService {
     OrderResponse createOrder(UUID buyerId, OrderRequest request);
     OrderResponse getOrder(UUID id);
     List<OrderResponse> getOrdersByBuyer(UUID buyerId);
+    
 }

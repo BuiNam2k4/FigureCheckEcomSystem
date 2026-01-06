@@ -28,10 +28,10 @@ export const AuthProvider = ({ children }) => {
                 const roles = decoded.scope ? decoded.scope.split(" ") : [];
                 setIsAdmin(roles.includes("ROLE_ADMIN"));
                 
-                // Optionally fetch full user details if needed, or just use decoded info
-                // const userInfo = await getMyInfo(token); 
-                // setUser(userInfo);
-                setUser({ sub: decoded.sub, ...decoded }); // Use decoded token data for now
+                // Fetch full user details to get UUID
+                const userInfo = await getMyInfo(token); 
+                // userInfo IS the UserResponse because service unwraps it
+                setUser({ ...userInfo, sub: decoded.sub });
             }
         } catch (error) {
             console.error("Invalid token:", error);
@@ -57,7 +57,10 @@ export const AuthProvider = ({ children }) => {
         const roles = decoded.scope ? decoded.scope.split(" ") : [];
         const isAdminUser = roles.includes("ROLE_ADMIN");
         setIsAdmin(isAdminUser);
-        setUser({ sub: decoded.sub, ...decoded });
+        
+        // Fetch full user info
+        const userInfo = await getMyInfo(result.token);
+        setUser({ ...userInfo, sub: decoded.sub });
         
         return { success: true, isAdmin: isAdminUser };
       }

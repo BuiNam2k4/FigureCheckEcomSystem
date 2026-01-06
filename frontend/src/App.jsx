@@ -11,7 +11,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import VerificationQueue from './pages/admin/VerificationQueue';
 import { CartProvider } from './context/CartContext';
 import CartPage from './pages/cart/CartPage';
-// import './App.css'; // Removed// Note: Tailwind works via global styles in index.css, App.css might be default vite.
+import CheckoutPage from './pages/checkout/CheckoutPage';
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/product/:id" element={<ProductDetailPage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
               {/* Add more routes as needed */}
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>

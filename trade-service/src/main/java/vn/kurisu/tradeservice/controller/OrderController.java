@@ -1,4 +1,4 @@
-package main.java.vn.kurisu.tradeservice.controller;
+package vn.kurisu.tradeservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

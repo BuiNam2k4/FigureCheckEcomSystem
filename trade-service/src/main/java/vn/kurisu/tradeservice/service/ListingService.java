@@ -10,6 +10,7 @@ public interface ListingService {
     ListingResponse createListing(ListingRequest request);
     ListingResponse getListing(UUID id);
     List<ListingResponse> getListingsByUser(UUID userId);
+    List<ListingResponse> getListingsByProduct(UUID productId);
     List<ListingResponse> getAllListings();
     void deleteListing(UUID id);
 }

@@ -1,0 +1,26 @@
+{
+  "home": {
+    "hero_tagline": "Xác thực Độ Tin cậy bằng AI",
+    "hero_title": "Mua & Bán Mô hình Anime với sự",
+    "hero_title_highlight": "Tin tưởng",
+    "hero_desc": "Sàn giao dịch đầu tiên sử dụng AI tiên tiến để xác minh tính xác thực của mô hình trước khi bạn mua. Không còn hàng giả. Chỉ có bộ sưu tập chính hãng.",
+    "cta_browse": "Duyệt Mô hình",
+    "cta_sell": "Bắt đầu Bán",
+    "trending_title": "Đang Thịnh hành",
+    "trending_desc": "Các mô hình phổ biến từ người bán đã xác minh.",
+    "view_all": "Xem Tất cả",
+    "loading": "Đang tải sản phẩm...",
+    "no_products": "Không tìm thấy sản phẩm qua API. Hãy đảm bảo backend đang chạy.",
+    "how_it_works_title": "Cách Hoạt Động",
+    "step_1_title": "Tải Ảnh lên",
+    "step_1_desc": "Người bán tải lên ảnh độ phân giải cao của mô hình và hộp.",
+    "step_2_title": "Phân tích AI",
+    "step_2_desc": "Mô hình thị giác máy tính của chúng tôi kiểm tra sự không nhất quán trong sơn, điêu khắc và bao bì.",
+    "step_3_title": "Danh sách Đã xác minh",
+    "step_3_desc": "Các mặt hàng chính hãng nhận được huy hiệu \"Đã xác minh\" và đề xuất giá thị trường."
+  },
+  "common": {
+    "toggle_theme": "Đổi giao diện",
+    "toggle_language": "Đổi ngôn ngữ"
+  }
+}

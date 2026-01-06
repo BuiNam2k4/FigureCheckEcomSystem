@@ -24,15 +24,17 @@ spring:
           predicates:
             - Path=/identity/**
 
+        # Route: Trade Service
+        - id: trade-service-route
+          uri: lb://TRADE-SERVICE
+          predicates:
+            - Path=/api/listings/**, /api/cart/**, /api/orders/**
+
         # Route: Product Service
         - id: product-service-route
           uri: lb://PRODUCT-SERVICE
           predicates:
-            - Path=/api/**
-        - id: trade-service-route
-          uri: lb://TRADE-SERVICE
-          predicates:
-            - Path=/api/**
+            - Path=/api/products/**, /api/categories/**, /api/series/**, /api/manufacturers/**, /api/product-images/**
 
 eureka:
   client:

@@ -21,14 +21,23 @@ import java.util.stream.Collectors;
 public class ListingServiceImpl implements vn.kurisu.tradeservice.service.ListingService {
     private final ListingRepository listingRepository;
     private final ListingMapper listingMapper;
+    private final vn.kurisu.tradeservice.client.ProductClient productClient;
 
     @Override
     @Transactional
     public ListingResponse createListing(ListingRequest request) {
+        // Verify product exists
+        try {
+            UUID productId = UUID.fromString(request.getProductId());
+            productClient.getProductById(productId);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.INVALID_KEY); // Or PRODUCT_NOT_FOUND
+        }
+
         Listing listing = listingMapper.toListing(request);
         // Assuming userId from context or request. creating fake userId for now or need to pass it
         // Ideally should get from SecurityContext holder
-        listing.setUserId(UUID.randomUUID()); // TODO: Get from auth context
+        listing.setUserId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6")); // Logic to get current user
 
         if (request.getImageUrls() != null) {
             List<ListingImage> images = request.getImageUrls().stream()
@@ -58,6 +67,13 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
     @Override
     public List<ListingResponse> getListingsByUser(UUID userId) {
         return listingRepository.findByUserId(userId).stream()
+                .map(listingMapper::toListingResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ListingResponse> getListingsByProduct(UUID productId) {
+        return listingRepository.findByProductId(productId).stream()
                 .map(listingMapper::toListingResponse)
                 .collect(Collectors.toList());
     }

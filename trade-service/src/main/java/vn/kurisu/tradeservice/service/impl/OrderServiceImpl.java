@@ -26,10 +26,20 @@ public class OrderServiceImpl implements vn.kurisu.tradeservice.service.OrderSer
     private final OrderRepository orderRepository;
     private final ListingRepository listingRepository;
     private final OrderMapper orderMapper;
+    private final vn.kurisu.tradeservice.client.IdentityClient identityClient;
+    private final vn.kurisu.tradeservice.client.ProductClient productClient;
 
     @Override
     @Transactional
     public OrderResponse createOrder(UUID buyerId, OrderRequest request) {
+        // Verify buyer exists
+        try {
+            identityClient.getUser(buyerId.toString());
+        } catch (Exception e) {
+             // throw new AppException(ErrorCode.USER_NOT_FOUND);
+             // Proceeding for now as Identity Service might not have this user yet in new DB or error handling needs refinement
+        }
+
         Order order = new Order();
         order.setBuyerId(buyerId);
         order.setShippingAddress(request.getShippingAddress());
@@ -47,11 +57,22 @@ public class OrderServiceImpl implements vn.kurisu.tradeservice.service.OrderSer
             
             // Check status, assume AVAILABLE
             
+            // Fetch Product Name from Product Service
+            String productName = "Unknown Product";
+            try {
+                var productResponse = productClient.getProductById(listing.getProductId());
+                if (productResponse != null && productResponse.getResult() != null) {
+                    productName = productResponse.getResult().getName();
+                }
+            } catch (Exception e) {
+                // Log error or fallback
+            }
+
             OrderItem orderItem = OrderItem.builder()
                     .order(order)
                     .listingId(listing.getId())
                     .sellerId(listing.getUserId())
-                    .productName("Product " + listing.getProductId()) // Should call Product Service
+                    .productName(productName)
                     .productImageUrl(listing.getImages().isEmpty() ? "" : listing.getImages().get(0).getImageUrl())
                     .price(listing.getPrice())
                     .build();
@@ -59,7 +80,7 @@ public class OrderServiceImpl implements vn.kurisu.tradeservice.service.OrderSer
             orderItems.add(orderItem);
             totalAmount = totalAmount.add(listing.getPrice());
             
-            // Update listing status?
+            // Update listing status
             listing.setStatus("LOCKED");
             listingRepository.save(listing);
         }

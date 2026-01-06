@@ -3,14 +3,21 @@ import { Button } from "@/components/ui/button";
 // import { products } from '../data/mockData';
 import { fetchProducts } from '../services/productService';
 import ProductCard from '../components/products/ProductCard';
-import { ArrowRight, ShieldCheck, Moon, Sun } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Moon, Sun, Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../components/theme-provider';
+import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { theme, setTheme } = useTheme();
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+      const newLang = i18n.language === 'en' ? 'vi' : 'en';
+      i18n.changeLanguage(newLang);
+  };
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -47,38 +54,53 @@ const HomePage = () => {
     <div className="space-y-12 pb-12">
       {/* Hero Section */}
       <section className="relative bg-muted/40 py-20 px-4 md:px-6 lg:py-32 overflow-hidden">
-        <div className="absolute top-4 right-4 z-20">
+        <div className="absolute top-4 right-4 z-20 flex gap-2">
+            <Button 
+                variant="outline" 
+                size="icon" 
+                onClick={toggleLanguage}
+                className="rounded-full"
+                title={t('common.toggle_language')}
+            >
+                <div className="relative">
+                    <Globe className="h-[1.2rem] w-[1.2rem]" />
+                    <span className="absolute -bottom-1 -right-1 text-[10px] font-bold bg-primary text-primary-foreground px-1 rounded-sm leading-tight">
+                        {i18n.language === 'en' ? 'EN' : 'VI'}
+                    </span>
+                </div>
+                <span className="sr-only">{t('common.toggle_language')}</span>
+            </Button>
             <Button 
                 variant="outline" 
                 size="icon" 
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="rounded-full"
+                title={t('common.toggle_theme')}
             >
                 {theme === "dark" ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
-                <span className="sr-only">Toggle theme</span>
+                <span className="sr-only">{t('common.toggle_theme')}</span>
             </Button>
         </div>
         <div className="container relative z-10 flex flex-col items-center text-center space-y-6 max-w-4xl mx-auto">
           <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80 mb-4">
              <ShieldCheck className="w-3 h-3 mr-1" />
-             AI-Powered Authenticity Verification
+             {t('home.hero_tagline')}
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            Buy & Sell Anime Figures with <span className="text-primary">Confidence</span>
+            {t('home.hero_title')} <span className="text-primary">{t('home.hero_title_highlight')}</span>
           </h1>
           <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
-            The first marketplace that uses advanced AI to verify figure authenticity before you buy. 
-            No more bootlegs. Just genuine collections.
+            {t('home.hero_desc')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
             <Link to="/browse">
               <Button size="lg" className="h-12 px-8 text-lg">
-                Browse Figures
+                {t('home.cta_browse')}
               </Button>
             </Link>
             <Link to="/sell">
               <Button size="lg" variant="outline" className="h-12 px-8 text-lg group">
-                Start Selling <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                {t('home.cta_sell')} <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
           </div>
@@ -92,23 +114,23 @@ const HomePage = () => {
       <section className="container px-4 md:px-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">Trending Now</h2>
-            <p className="text-muted-foreground">Popular figures from verified sellers.</p>
+            <h2 className="text-2xl font-bold tracking-tight">{t('home.trending_title')}</h2>
+            <p className="text-muted-foreground">{t('home.trending_desc')}</p>
           </div>
           <Link to="/browse">
-             <Button variant="ghost" className="gap-1">View All <ArrowRight className="w-4 h-4"/></Button>
+             <Button variant="ghost" className="gap-1">{t('home.view_all')} <ArrowRight className="w-4 h-4"/></Button>
           </Link>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {loading ? (
-             <div className="col-span-full text-center py-10">Loading products...</div>
+             <div className="col-span-full text-center py-10">{t('home.loading')}</div>
           ) : products.length > 0 ? (
             products.map((product) => (
                <ProductCard key={product.id} product={product} />
             ))
           ) : (
-             <div className="col-span-full text-center py-10 text-muted-foreground">No products found via API. Ensure backend is running.</div>
+             <div className="col-span-full text-center py-10 text-muted-foreground">{t('home.no_products')}</div>
           )}
         </div>
       </section>
@@ -117,27 +139,27 @@ const HomePage = () => {
       <section className="container px-4 md:px-6 py-12">
         <div className="bg-primary/5 rounded-3xl p-8 md:p-12 lg:p-16 flex flex-col md:flex-row items-center gap-12">
           <div className="flex-1 space-y-6">
-             <h2 className="text-3xl font-bold tracking-tight">How it Works</h2>
+             <h2 className="text-3xl font-bold tracking-tight">{t('home.how_it_works_title')}</h2>
              <div className="space-y-4">
                 <div className="flex gap-4">
                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary font-bold">1</div>
                    <div>
-                     <h3 className="font-semibold">Upload Photos</h3>
-                     <p className="text-sm text-muted-foreground">Sellers upload high-res photos of the figure and box.</p>
+                     <h3 className="font-semibold">{t('home.step_1_title')}</h3>
+                     <p className="text-sm text-muted-foreground">{t('home.step_1_desc')}</p>
                    </div>
                 </div>
                 <div className="flex gap-4">
                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary font-bold">2</div>
                    <div>
-                     <h3 className="font-semibold">AI Analysis</h3>
-                     <p className="text-sm text-muted-foreground">Our computer vision model checks for inconsistencies in paint, sculpting, and packaging.</p>
+                     <h3 className="font-semibold">{t('home.step_2_title')}</h3>
+                     <p className="text-sm text-muted-foreground">{t('home.step_2_desc')}</p>
                    </div>
                 </div>
                 <div className="flex gap-4">
                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary font-bold">3</div>
                    <div>
-                     <h3 className="font-semibold">Verified Listing</h3>
-                     <p className="text-sm text-muted-foreground">Authentic items get a "Verified" badge and market price suggestion.</p>
+                     <h3 className="font-semibold">{t('home.step_3_title')}</h3>
+                     <p className="text-sm text-muted-foreground">{t('home.step_3_desc')}</p>
                    </div>
                 </div>
              </div>

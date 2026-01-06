@@ -1,0 +1,26 @@
+{
+  "home": {
+    "hero_tagline": "AI-Powered Authenticity Verification",
+    "hero_title": "Buy & Sell Anime Figures with",
+    "hero_title_highlight": "Confidence",
+    "hero_desc": "The first marketplace that uses advanced AI to verify figure authenticity before you buy. No more bootlegs. Just genuine collections.",
+    "cta_browse": "Browse Figures",
+    "cta_sell": "Start Selling",
+    "trending_title": "Trending Now",
+    "trending_desc": "Popular figures from verified sellers.",
+    "view_all": "View All",
+    "loading": "Loading products...",
+    "no_products": "No products found via API. Ensure backend is running.",
+    "how_it_works_title": "How it Works",
+    "step_1_title": "Upload Photos",
+    "step_1_desc": "Sellers upload high-res photos of the figure and box.",
+    "step_2_title": "AI Analysis",
+    "step_2_desc": "Our computer vision model checks for inconsistencies in paint, sculpting, and packaging.",
+    "step_3_title": "Verified Listing",
+    "step_3_desc": "Authentic items get a \"Verified\" badge and market price suggestion."
+  },
+  "common": {
+    "toggle_theme": "Toggle theme",
+    "toggle_language": "Switch Language"
+  }
+}

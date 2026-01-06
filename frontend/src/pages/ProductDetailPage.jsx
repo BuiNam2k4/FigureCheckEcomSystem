@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { fetchProductById } from '../services/productService';
+import { getListingsByProduct } from '../services/tradeService';
+import { useCart } from '../context/CartContext';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -22,6 +24,11 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mainImage, setMainImage] = useState("");
+  const [listings, setListings] = useState([]);
+  
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
+  const [addingToCart, setAddingToCart] = useState(false);
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -64,6 +71,36 @@ const ProductDetailPage = () => {
         loadProduct();
     }
   }, [id]);
+
+  // Fetch listings separately
+  useEffect(() => {
+    const loadListings = async () => {
+        if (id) {
+            const fetchedListings = await getListingsByProduct(id);
+            console.log("Listings data:", fetchedListings);
+            // Filter only active listings if needed, e.g., result.status === 'AVAILABLE'
+            // For now assuming backend returns what we need
+            setListings(fetchedListings);
+        }
+    };
+    loadListings();
+  }, [id]);
+
+  const handleAddToCart = async () => {
+    if (listings.length === 0) {
+        alert("Sorry, this item is currently out of stock.");
+        return;
+    }
+    
+    // Logic to pick a listing. For now, pick the first one (or cheapest).
+    // Ideally user chooses, but "Add to Cart" implies a default choice (Buy Box).
+    // Let's sort by price ascending first? Or just take the first one.
+    const bestListing = listings[0]; 
+    
+    setAddingToCart(true);
+    await addToCart(bestListing.id);
+    setAddingToCart(false);
+  };
 
   if (loading) return <div className="p-20 text-center">Loading product details...</div>;
   if (error || !product) return <div className="p-20 text-center text-red-500">{error || "Product not found"}</div>;
@@ -222,7 +259,15 @@ const ProductDetailPage = () => {
 
              {/* Actions */}
              <div className="flex flex-col gap-3">
-                <Button className="w-full h-12 text-lg">Buy Now</Button>
+                
+               <Button 
+                className="w-full h-12 text-lg" 
+                onClick={handleAddToCart}
+                disabled={addingToCart || listings.length === 0}
+               >
+                   {addingToCart ? "Adding..." : (listings.length > 0 ? "Add to Cart" : "Out of Stock")}
+               </Button>
+               
                 <Button variant="outline" className="w-full">Make Offer</Button>
              </div>
              

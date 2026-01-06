@@ -1,4 +1,4 @@
-package main.java.vn.kurisu.tradeservice.controller;
+package vn.kurisu.tradeservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +34,13 @@ public class ListingController {
     public ApiResponse<List<ListingResponse>> getListingsByUser(@PathVariable UUID userId) {
         return ApiResponse.<List<ListingResponse>>builder()
                 .result(listingService.getListingsByUser(userId))
+                .build();
+    }
+
+    @GetMapping("/product/{productId}")
+    public ApiResponse<List<ListingResponse>> getListingsByProduct(@PathVariable UUID productId) {
+        return ApiResponse.<List<ListingResponse>>builder()
+                .result(listingService.getListingsByProduct(productId))
                 .build();
     }
 

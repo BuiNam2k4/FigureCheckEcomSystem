@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, UploadCloud, X, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createProduct, fetchManufacturers, fetchSeries, fetchCategories, uploadImage } from '../../services/productService';
+import { createListing } from '../../services/tradeService';
 
 const formSchema = z.object({
   name: z.string().min(5, "Product name must be at least 5 characters"),
@@ -162,7 +163,20 @@ const SellerUploadPage = () => {
           };
 
           // 3. Create Product
-          await createProduct(payload);
+          const newProduct = await createProduct(payload);
+          
+          // 4. Create Listing (Trade Service)
+          const listingPayload = {
+              productId: newProduct.id,
+              price: values.priceMarket, // Using market price as selling price for now
+              quantity: 1,
+              condition: values.condition.toUpperCase().replace(" ", "_"), // Format to Enum if needed
+              description: values.description,
+              imageUrls: uploadedUrls
+          };
+          
+          await createListing(listingPayload);
+          
           navigate('/'); 
       } catch (error) {
           console.error("Submission failed", error);

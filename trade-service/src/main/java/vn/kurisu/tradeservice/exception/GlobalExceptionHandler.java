@@ -9,19 +9,25 @@ import vn.kurisu.tradeservice.dto.response.ApiResponse;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = RuntimeException.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception) {
-        ApiResponse apiResponse = new ApiResponse();
-
+    ResponseEntity<ApiResponse<?>> handlingRuntimeException(RuntimeException exception) {
+        ApiResponse<?> apiResponse = new ApiResponse<>();
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
-
+        apiResponse.setMessage(exception.getMessage()); // Expose error message
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+    
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    ResponseEntity<ApiResponse<?>> handlingIllegalArgumentException(IllegalArgumentException exception) {
+        ApiResponse<?> apiResponse = new ApiResponse<>();
+        apiResponse.setCode(ErrorCode.INVALID_KEY.getCode());
+        apiResponse.setMessage(ErrorCode.INVALID_KEY.getMessage() + ": " + exception.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
+    ResponseEntity<ApiResponse<?>> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        ApiResponse apiResponse = new ApiResponse();
+        ApiResponse<?> apiResponse = new ApiResponse<>();
 
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
