@@ -3,6 +3,7 @@ package vn.kurisu.tradeservice.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import vn.kurisu.tradeservice.dto.request.ListingRequest;
+import vn.kurisu.tradeservice.dto.request.ListingFilterRequest;
 import vn.kurisu.tradeservice.dto.response.ApiResponse;
 import vn.kurisu.tradeservice.dto.response.ListingResponse;
 import vn.kurisu.tradeservice.service.ListingService;
@@ -45,9 +46,9 @@ public class ListingController {
     }
 
     @GetMapping
-    public ApiResponse<List<ListingResponse>> getAllListings() {
-        return ApiResponse.<List<ListingResponse>>builder()
-                .result(listingService.getAllListings())
+    public ApiResponse<vn.kurisu.tradeservice.dto.response.PageResponse<ListingResponse>> getAllListings(@ModelAttribute ListingFilterRequest filter) {
+        return ApiResponse.<vn.kurisu.tradeservice.dto.response.PageResponse<ListingResponse>>builder()
+                .result(listingService.getAllListings(filter))
                 .build();
     }
 

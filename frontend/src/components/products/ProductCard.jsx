@@ -36,9 +36,9 @@ const ProductCard = ({ product }) => {
       <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
         <div className="relative aspect-square overflow-hidden bg-muted">
           <img 
-            src={images[0].imageUrl} 
+            src={images[0]?.imageUrl || images[0]} 
             alt={name} 
-            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+            className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105 p-2"
             loading="lazy"
           />
           {getStatusBadge(aiAnalysis?.status)}

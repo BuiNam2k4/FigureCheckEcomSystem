@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ListingRepository extends JpaRepository<Listing, UUID> {
+public interface ListingRepository extends JpaRepository<Listing, UUID>, org.springframework.data.jpa.repository.JpaSpecificationExecutor<Listing> {
     List<Listing> findByUserId(UUID userId);
     List<Listing> findByProductId(UUID productId);
 }

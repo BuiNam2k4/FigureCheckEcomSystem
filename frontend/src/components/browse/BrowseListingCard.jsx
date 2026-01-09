@@ -15,7 +15,7 @@ const BrowseListingCard = ({ product }) => {
                 <img 
                     src={product.images?.[0]} 
                     alt={product.name} 
-                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" 
+                    className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-110 p-2" 
                 />
                 
                 {/* AI Badge */}

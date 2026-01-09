@@ -166,6 +166,15 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchProducts(List<String> categories, List<String> manufacturers, List<String> series) {
+        org.springframework.data.jpa.domain.Specification<Product> spec = com.silverviking.specification.ProductSpecification.filterProducts(categories, manufacturers, series);
+        return productRepository.findAll(spec).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     private ProductResponse mapToResponse(Product product) {
         CategoryResponse categoryResponse = CategoryResponse.builder()
                 .id(product.getCategory().getId())

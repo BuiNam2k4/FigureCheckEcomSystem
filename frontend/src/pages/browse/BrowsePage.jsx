@@ -32,31 +32,112 @@ const BrowsePage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Fetch listings from API
+    const [filters, setFilters] = useState({
+        minPrice: 0,
+        maxPrice: 2000,
+        condition: '', // API filter
+        categories: [], // Client-side filter
+        manufacturers: [], // Client-side filter
+        series: [], // Client-side filter
+        page: 1
+    });
+
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        totalPages: 1,
+        totalElements: 0
+    });
+
+    const [metadata, setMetadata] = useState({
+        categories: [],
+        manufacturers: [],
+        series: []
+    });
+
+    // Fetch listings and metadata
+    React.useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                // Fetch Metadata Parallel
+                const [uniqueCats, uniqueMans, uniqueSeries] = await Promise.all([
+                   fetch('http://localhost:8888/api/categories').then(res => res.json()),
+                   fetch('http://localhost:8888/api/manufacturers').then(res => res.json()),
+                   fetch('http://localhost:8888/api/series').then(res => res.json())
+                ]);
+
+                setMetadata({
+                    categories: uniqueCats.result || [],
+                    manufacturers: uniqueMans.result || [],
+                    series: uniqueSeries.result || []
+                });
+
+                // Fetch Listings (Initial)
+                // ... (Logic combined or kept separate? keeping separate for cleaner filter updates)
+             } catch (e) {
+                console.error("Failed to load metadata", e);
+             }
+        };
+        fetchData();
+    }, []);
+
+    // Fetch listings from API (Keep this separate or merge? Keeping separate allows re-fetch on filter change without re-fetching metadata)
     React.useEffect(() => {
         const fetchListings = async () => {
+            setIsLoading(true);
             try {
-                const response = await fetch('http://localhost:8888/api/listings');
+                // Construct Query Params
+                const params = new URLSearchParams();
+                if (filters.minPrice > 0) params.append('minPrice', filters.minPrice);
+                if (filters.maxPrice < 2000) params.append('maxPrice', filters.maxPrice);
+                if (filters.condition) params.append('condition', filters.condition);
+                
+                // Add array filters
+                if (filters.categories.length > 0) {
+                    filters.categories.forEach(cat => params.append('categories', cat));
+                }
+                if (filters.manufacturers.length > 0) {
+                    filters.manufacturers.forEach(mf => params.append('manufacturers', mf));
+                }
+                if (filters.series.length > 0) {
+                    filters.series.forEach(s => params.append('series', s));
+                }
+                
+                // Add pagination params
+                params.append('page', filters.page || 1);
+                params.append('size', 12);
+
+                const response = await fetch(`http://localhost:8888/api/listings?${params.toString()}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch listings');
                 }
                 const data = await response.json();
                 
-                // Map API response to the structure expected by BrowseListingCard
-                // Assuming data.result is the array of listings
-                const mappedListings = (data.result || []).map(item => ({
+                // Map API response
+                // Backend now returns PageResponse wrapped in ApiResponse
+                // result: { currentPage, totalPages, data: [...] }
+                const resultData = data.result || {};
+                const listingsData = resultData.data || [];
+                
+                setPagination({
+                    currentPage: resultData.currentPage || 1,
+                    totalPages: resultData.totalPages || 1,
+                    totalElements: resultData.totalElements || 0
+                });
+
+                const mappedListings = listingsData.map(item => ({
                     id: item.listingId || item.id,
-                    productId: item.productId, // Ensure productId is passed for linking
+                    productId: item.productId,
                     name: item.productName || item.product?.name || item.name || "Unknown Figure", 
                     price: item.price,
                     condition: item.condition,
                     images: item.images?.map(img => img.imageUrl) || [item.imageUrl] || [], 
                     series: item.series || item.product?.series?.name || "Unknown Series", 
                     manufacturer: item.manufacturer || item.product?.manufacturer?.name || "Unknown Manufacturer",
-                    aiAnalysis: { authenticityScore: 90 }, // Mock AI score for now as it might not be in basic listing
+                    aiAnalysis: { authenticityScore: 90 },
                     seller: {
                         name: item.seller?.username || `Seller #${item.sellerId ? item.sellerId.substring(0,8) : 'Unknown'}`, 
-                        rating: 4.8 // Mock rating
+                        rating: 4.8
                     }
                 }));
 
@@ -64,14 +145,20 @@ const BrowsePage = () => {
             } catch (err) {
                 console.error("Error fetching listings:", err);
                 setError(err.message);
-                // Fallback to empty or keep loading false
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchListings();
-    }, []);
+    }, [filters]); 
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= pagination.totalPages) {
+            setFilters(prev => ({ ...prev, page: newPage }));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }; 
 
     if (isLoading) {
         return (
@@ -84,7 +171,6 @@ const BrowsePage = () => {
         );
     }
     
-    // Use listings from API, fall back to empty array if error
     const displayListings = listings;
 
     return (
@@ -114,7 +200,13 @@ const BrowsePage = () => {
                     <aside className="w-full lg:w-1/4 hidden lg:block">
                         <div className="sticky top-24">
                             <h2 className="text-lg font-semibold mb-4 px-1">Filters</h2>
-                            <FilterSidebar />
+                            <FilterSidebar 
+                                filters={filters} 
+                                setFilters={setFilters} 
+                                categories={metadata.categories}
+                                manufacturers={metadata.manufacturers}
+                                series={metadata.series}
+                            />
                         </div>
                     </aside>
 
@@ -123,7 +215,7 @@ const BrowsePage = () => {
                         {/* Top Toolbar */}
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-6 border-b border-gray-800">
                             <div className="text-sm text-gray-400">
-                                Showing <span className="text-white font-medium">{displayListings.length}</span> figures
+                                Showing <span className="text-white font-medium">{displayListings.length}</span> of <span className="text-white font-medium">{pagination.totalElements}</span> figures
                             </div>
 
                             <div className="flex items-center gap-4 w-full sm:w-auto">
@@ -188,14 +280,58 @@ const BrowsePage = () => {
                             )}
                         </div>
                         
-                        {/* Pagination (Mock) */}
-                        <div className="mt-12 flex justify-center gap-2">
-                             <Button variant="outline" className="border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800" disabled>Previous</Button>
-                             <Button variant="outline" className="bg-primary text-primary-foreground border-primary hover:bg-primary/90">1</Button>
-                             <Button variant="outline" className="border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800">2</Button>
-                             <Button variant="outline" className="border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800">3</Button>
-                             <Button variant="outline" className="border-gray-700 text-gray-400 hover:text-white hover:bg-gray-800">Next</Button>
-                        </div>
+                        {/* Pagination Controls */}
+                        {pagination.totalPages > 1 && (
+                            <div className="flex justify-center items-center gap-2 mt-12">
+                                <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={() => handlePageChange(pagination.currentPage - 1)}
+                                    disabled={pagination.currentPage === 1}
+                                    className="border-gray-700 bg-transparent hover:bg-gray-800"
+                                >
+                                    Previous
+                                </Button>
+                                
+                                {Array.from({ length: Math.min(pagination.totalPages, 5) }, (_, i) => {
+                                    // Logic for sliding window or simplified for now (first 5 pages)
+                                    // A better implementation would be a proper pagination component
+                                    // For now, let's just show up to 5 pages or all if less
+                                    let pageNum = i + 1;
+                                    if(pagination.totalPages > 5 && pagination.currentPage > 3) {
+                                         // simplified sliding: start from current - 2, but max is total
+                                         pageNum = pagination.currentPage - 2 + i;
+                                    }
+                                    // Clamp
+                                    if (pageNum > pagination.totalPages) return null;
+                                    if (pageNum < 1) return null;
+
+                                    return (
+                                    <Button
+                                        key={pageNum}
+                                        variant={pageNum === pagination.currentPage ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => handlePageChange(pageNum)}
+                                        className={pageNum === pagination.currentPage 
+                                            ? "bg-white text-black hover:bg-gray-200" 
+                                            : "border-gray-700 bg-transparent hover:bg-gray-800 text-gray-400"
+                                        }
+                                    >
+                                        {pageNum}
+                                    </Button>
+                                )})}
+
+                                <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={() => handlePageChange(pagination.currentPage + 1)}
+                                    disabled={pagination.currentPage === pagination.totalPages}
+                                    className="border-gray-700 bg-transparent hover:bg-gray-800"
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        )}
                     </main>
                 </div>
             </div>

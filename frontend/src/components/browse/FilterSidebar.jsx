@@ -6,7 +6,27 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Search } from 'lucide-react';
 
-const FilterSidebar = () => {
+const FilterSidebar = ({ filters, setFilters, categories = [], manufacturers = [], series = [] }) => {
+    // Helper to handle condition toggle
+    const handleConditionChange = (condition, checked) => {
+        setFilters(prev => ({
+            ...prev,
+            condition: checked ? condition : (prev.condition === condition ? '' : prev.condition)
+        }));
+    };
+
+    // Helper for array filters (manufacturers, series)
+    const handleArrayFilter = (type, value, checked) => {
+        setFilters(prev => {
+            const current = prev[type] || [];
+            if (checked) {
+                return { ...prev, [type]: [...current, value] };
+            } else {
+                return { ...prev, [type]: current.filter(item => item !== value) };
+            }
+        });
+    };
+
     return (
         <div className="w-full space-y-6">
             {/* AI Verified Highlight */}
@@ -28,15 +48,32 @@ const FilterSidebar = () => {
                     <AccordionTrigger className="text-gray-200 hover:text-white hover:no-underline">Price Range</AccordionTrigger>
                     <AccordionContent>
                         <div className="pt-2 px-2 pb-4 space-y-4">
-                            <Slider defaultValue={[0, 1000]} max={2000} step={10} className="py-4" />
+                            <Slider 
+                                defaultValue={[0, 2000]} 
+                                value={[filters.minPrice, filters.maxPrice]}
+                                max={2000} 
+                                step={10} 
+                                className="py-4" 
+                                onValueChange={(val) => setFilters(prev => ({ ...prev, minPrice: val[0], maxPrice: val[1] }))}
+                            />
                             <div className="flex items-center justify-between gap-4">
                                 <div className="space-y-1">
                                     <span className="text-xs text-muted-foreground">Min</span>
-                                    <Input type="number" placeholder="0" className="h-8 bg-muted border-none" />
+                                    <Input 
+                                        type="number" 
+                                        value={filters.minPrice}
+                                        onChange={(e) => setFilters(prev => ({ ...prev, minPrice: Number(e.target.value) }))}
+                                        className="h-8 bg-muted border-none" 
+                                    />
                                 </div>
                                 <div className="space-y-1">
                                     <span className="text-xs text-muted-foreground">Max</span>
-                                    <Input type="number" placeholder="2000" className="h-8 bg-muted border-none" />
+                                    <Input 
+                                        type="number" 
+                                        value={filters.maxPrice}
+                                        onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: Number(e.target.value) }))}
+                                        className="h-8 bg-muted border-none" 
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -48,11 +85,16 @@ const FilterSidebar = () => {
                     <AccordionTrigger className="text-gray-200 hover:text-white hover:no-underline">Condition</AccordionTrigger>
                     <AccordionContent>
                         <div className="space-y-3 pt-1">
-                            {['New (Sealed)', 'Like New', 'Used (Good)', 'Damaged Box'].map((item) => (
+                            {['NEW', 'LIKE_NEW', 'USED', 'DAMAGED'].map((item) => (
                                 <div key={item} className="flex items-center space-x-2">
-                                    <Checkbox id={item} className="border-gray-600 data-[state=checked]:bg-primary" />
+                                    <Checkbox 
+                                        id={item} 
+                                        checked={filters.condition === item}
+                                        onCheckedChange={(checked) => handleConditionChange(item, checked)}
+                                        className="border-gray-600 data-[state=checked]:bg-primary" 
+                                    />
                                     <Label htmlFor={item} className="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors">
-                                        {item}
+                                        {item.replace('_', ' ')}
                                     </Label>
                                 </div>
                             ))}
@@ -65,11 +107,16 @@ const FilterSidebar = () => {
                     <AccordionTrigger className="text-gray-200 hover:text-white hover:no-underline">Categories</AccordionTrigger>
                     <AccordionContent>
                         <div className="space-y-3 pt-1">
-                            {['Scale Figure', 'Nendoroid', 'Figma', 'Statue', 'Prize Figure'].map((item) => (
-                                <div key={item} className="flex items-center space-x-2">
-                                    <Checkbox id={item} className="border-gray-600 data-[state=checked]:bg-primary" />
-                                    <Label htmlFor={item} className="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors">
-                                        {item}
+                            {categories.map((cat) => (
+                                <div key={cat.id || cat.name} className="flex items-center space-x-2">
+                                    <Checkbox 
+                                        id={`cat-${cat.id}`} 
+                                        checked={filters.categories.includes(cat.name)}
+                                        onCheckedChange={(checked) => handleArrayFilter('categories', cat.name, checked)}
+                                        className="border-gray-600 data-[state=checked]:bg-primary" 
+                                    />
+                                    <Label htmlFor={`cat-${cat.id}`} className="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors">
+                                        {cat.name}
                                     </Label>
                                 </div>
                             ))}
@@ -86,11 +133,16 @@ const FilterSidebar = () => {
                              <Input placeholder="Search brand..." className="h-7 pl-7 bg-muted/50 border-none text-xs" />
                         </div>
                         <div className="space-y-3 pt-1 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                            {['Good Smile Company', 'Alter', 'Kotobukiya', 'Max Factory', 'Aniplex', 'Bandai Spirits', 'MegaHouse'].map((item) => (
-                                <div key={item} className="flex items-center space-x-2">
-                                    <Checkbox id={item} className="border-gray-600 data-[state=checked]:bg-primary" />
-                                    <Label htmlFor={item} className="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors">
-                                        {item}
+                            {manufacturers.map((mf) => (
+                                <div key={mf.id || mf.name} className="flex items-center space-x-2">
+                                    <Checkbox 
+                                        id={`mf-${mf.id}`} 
+                                        checked={filters.manufacturers?.includes(mf.name)}
+                                        onCheckedChange={(checked) => handleArrayFilter('manufacturers', mf.name, checked)}
+                                        className="border-gray-600 data-[state=checked]:bg-primary" 
+                                    />
+                                    <Label htmlFor={`mf-${mf.id}`} className="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors">
+                                        {mf.name}
                                     </Label>
                                 </div>
                             ))}
@@ -107,11 +159,16 @@ const FilterSidebar = () => {
                              <Input placeholder="Search series..." className="h-7 pl-7 bg-muted/50 border-none text-xs" />
                         </div>
                         <div className="space-y-3 pt-1 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                            {['One Piece', 'Genshin Impact', 'Hololive', 'Fate/Grand Order', 'Demon Slayer', 'Jujutsu Kaisen', 'Evangelion'].map((item) => (
-                                <div key={item} className="flex items-center space-x-2">
-                                    <Checkbox id={item} className="border-gray-600 data-[state=checked]:bg-primary" />
-                                    <Label htmlFor={item} className="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors">
-                                        {item}
+                            {series.map((s) => (
+                                <div key={s.id || s.name} className="flex items-center space-x-2">
+                                    <Checkbox 
+                                        id={`series-${s.id}`} 
+                                        checked={filters.series?.includes(s.name)}
+                                        onCheckedChange={(checked) => handleArrayFilter('series', s.name, checked)}
+                                        className="border-gray-600 data-[state=checked]:bg-primary" 
+                                    />
+                                    <Label htmlFor={`series-${s.id}`} className="text-sm text-gray-400 cursor-pointer hover:text-white transition-colors">
+                                        {s.name}
                                     </Label>
                                 </div>
                             ))}

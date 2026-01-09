@@ -12,4 +12,11 @@ import java.util.UUID;
 public interface ProductClient {
     @GetMapping("/api/products/{id}")
     ApiResponse<ProductResponse> getProductById(@PathVariable("id") UUID id);
+
+    @GetMapping("/api/products/search")
+    ApiResponse<java.util.List<ProductResponse>> searchProducts(
+            @org.springframework.web.bind.annotation.RequestParam("categories") java.util.List<String> categories,
+            @org.springframework.web.bind.annotation.RequestParam("manufacturers") java.util.List<String> manufacturers,
+            @org.springframework.web.bind.annotation.RequestParam("series") java.util.List<String> series
+    );
 }

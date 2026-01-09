@@ -13,4 +13,5 @@ public interface ProductService {
     void deleteProduct(UUID id);
     List<ProductResponse> getProductsByCategoryId(Long categoryId);
     List<ProductResponse> getProductsBySeriesId(Long seriesId);
+    List<ProductResponse> searchProducts(List<String> categories, List<String> manufacturers, List<String> series);
 }

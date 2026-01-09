@@ -12,8 +12,8 @@ import vn.kurisu.tradeservice.entity.OrderItem;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-01-06T22:42:03+0700",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.1 (Oracle Corporation)"
+    date = "2026-01-09T22:20:34+0700",
+    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.45.0.v20260101-2150, environment: Java 21.0.9 (Eclipse Adoptium)"
 )
 @Component
 public class OrderMapperImpl implements OrderMapper {
@@ -26,9 +26,9 @@ public class OrderMapperImpl implements OrderMapper {
 
         Order.OrderBuilder order = Order.builder();
 
-        order.shippingAddress( request.getShippingAddress() );
-        order.phoneNumber( request.getPhoneNumber() );
         order.paymentMethod( request.getPaymentMethod() );
+        order.phoneNumber( request.getPhoneNumber() );
+        order.shippingAddress( request.getShippingAddress() );
 
         return order.build();
     }
@@ -41,16 +41,16 @@ public class OrderMapperImpl implements OrderMapper {
 
         OrderResponse.OrderResponseBuilder orderResponse = OrderResponse.builder();
 
-        orderResponse.id( order.getId() );
         orderResponse.buyerId( order.getBuyerId() );
-        orderResponse.totalAmount( order.getTotalAmount() );
-        orderResponse.shippingFee( order.getShippingFee() );
-        orderResponse.shippingAddress( order.getShippingAddress() );
-        orderResponse.phoneNumber( order.getPhoneNumber() );
-        orderResponse.paymentMethod( order.getPaymentMethod() );
-        orderResponse.status( order.getStatus() );
-        orderResponse.orderItems( orderItemListToOrderItemResponseList( order.getOrderItems() ) );
         orderResponse.createdAt( order.getCreatedAt() );
+        orderResponse.id( order.getId() );
+        orderResponse.orderItems( orderItemListToOrderItemResponseList( order.getOrderItems() ) );
+        orderResponse.paymentMethod( order.getPaymentMethod() );
+        orderResponse.phoneNumber( order.getPhoneNumber() );
+        orderResponse.shippingAddress( order.getShippingAddress() );
+        orderResponse.shippingFee( order.getShippingFee() );
+        orderResponse.status( order.getStatus() );
+        orderResponse.totalAmount( order.getTotalAmount() );
         orderResponse.updatedAt( order.getUpdatedAt() );
 
         return orderResponse.build();
@@ -66,10 +66,10 @@ public class OrderMapperImpl implements OrderMapper {
 
         orderItemResponse.id( orderItem.getId() );
         orderItemResponse.listingId( orderItem.getListingId() );
-        orderItemResponse.sellerId( orderItem.getSellerId() );
-        orderItemResponse.productName( orderItem.getProductName() );
-        orderItemResponse.productImageUrl( orderItem.getProductImageUrl() );
         orderItemResponse.price( orderItem.getPrice() );
+        orderItemResponse.productImageUrl( orderItem.getProductImageUrl() );
+        orderItemResponse.productName( orderItem.getProductName() );
+        orderItemResponse.sellerId( orderItem.getSellerId() );
 
         return orderItemResponse.build();
     }

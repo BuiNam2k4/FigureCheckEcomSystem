@@ -55,4 +55,12 @@ public class ProductController {
     public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsBySeriesId(@PathVariable Long seriesId) {
         return ResponseEntity.ok(ApiResponse.success(productService.getProductsBySeriesId(seriesId), "Products retrieved successfully"));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> searchProducts(
+            @RequestParam(required = false) List<String> categories,
+            @RequestParam(required = false) List<String> manufacturers,
+            @RequestParam(required = false) List<String> series) {
+        return ResponseEntity.ok(ApiResponse.success(productService.searchProducts(categories, manufacturers, series), "Products retrieved successfully"));
+    }
 }

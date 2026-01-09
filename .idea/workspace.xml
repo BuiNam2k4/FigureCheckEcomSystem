@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="021303d4-17cb-4cac-80bf-09ce3b1e52c6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/identity-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/configuration/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/configuration/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/request/UserCreationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/request/UserCreationRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/request/UserUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/request/UserUpdateRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/response/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/response/UserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/resources/application.yaml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="381S0ZK4gJftwWg0yW0mslHWrhU" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "trade",
+    "last_opened_file_path": "C:/Users/Long Phung/OneDrive/Documents/DOAnCHuyenNganh/Microservice-FYB"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="021303d4-17cb-4cac-80bf-09ce3b1e52c6" name="Changes" comment="" />
+      <created>1767965361508</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1767965361508</updated>
+    </task>
+    <servers />
+  </component>
+</project>

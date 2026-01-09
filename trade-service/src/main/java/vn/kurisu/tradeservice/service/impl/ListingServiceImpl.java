@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.kurisu.tradeservice.dto.request.ListingRequest;
+import vn.kurisu.tradeservice.dto.request.ListingFilterRequest;
 import vn.kurisu.tradeservice.dto.response.ListingResponse;
 import vn.kurisu.tradeservice.entity.Listing;
 import vn.kurisu.tradeservice.entity.ListingImage;
@@ -98,6 +99,73 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
                     return response;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public vn.kurisu.tradeservice.dto.response.PageResponse<ListingResponse> getAllListings(ListingFilterRequest filter) {
+        List<UUID> productIds = null;
+        if ((filter.getCategories() != null && !filter.getCategories().isEmpty()) ||
+            (filter.getManufacturers() != null && !filter.getManufacturers().isEmpty()) ||
+            (filter.getSeries() != null && !filter.getSeries().isEmpty())) {
+            
+            try {
+                var productsResponse = productClient.searchProducts(filter.getCategories(), filter.getManufacturers(), filter.getSeries());
+                if (productsResponse != null && productsResponse.getResult() != null) {
+                    productIds = productsResponse.getResult().stream()
+                            .map(p -> p.getId())
+                            .collect(Collectors.toList());
+                    
+                    if (productIds.isEmpty()) {
+                        return vn.kurisu.tradeservice.dto.response.PageResponse.<ListingResponse>builder()
+                                .data(java.util.Collections.emptyList())
+                                .currentPage(filter.getPage())
+                                .pageSize(filter.getSize())
+                                .totalPages(0)
+                                .totalElements(0)
+                                .build();
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error fetching products for filter: " + e.getMessage());
+                 return vn.kurisu.tradeservice.dto.response.PageResponse.<ListingResponse>builder()
+                                .data(java.util.Collections.emptyList())
+                                .currentPage(filter.getPage())
+                                .pageSize(filter.getSize())
+                                .totalPages(0)
+                                .totalElements(0)
+                                .build();
+            }
+        }
+
+        org.springframework.data.jpa.domain.Specification<Listing> spec = vn.kurisu.tradeservice.specification.ListingSpecification.filterListings(filter, productIds);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(filter.getPage() - 1, filter.getSize());
+        org.springframework.data.domain.Page<Listing> page = listingRepository.findAll(spec, pageable);
+        
+        List<ListingResponse> data = page.getContent().stream()
+                .map(listing -> {
+                    ListingResponse response = listingMapper.toListingResponse(listing);
+                    try {
+                        var productResponse = productClient.getProductById(listing.getProductId());
+                        if (productResponse.getResult() != null) {
+                            var product = productResponse.getResult();
+                            response.setProductName(product.getName());
+                            if(product.getSeries() != null) response.setSeries(product.getSeries().getName());
+                            if(product.getManufacturer() != null) response.setManufacturer(product.getManufacturer().getName());
+                        }
+                    } catch (Exception e) {
+                         response.setProductName("Unknown Product");
+                    }
+                    return response;
+                })
+                .collect(Collectors.toList());
+
+        return vn.kurisu.tradeservice.dto.response.PageResponse.<ListingResponse>builder()
+                .currentPage(filter.getPage())
+                .pageSize(filter.getSize())
+                .totalPages(page.getTotalPages())
+                .totalElements(page.getTotalElements())
+                .data(data)
+                .build();
     }
 
     @Override

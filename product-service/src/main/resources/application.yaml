@@ -15,8 +15,8 @@ spring:
   datasource:
     url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/productservice}
     driverClassName: "com.mysql.cj.jdbc.Driver"
-    password: Darlingofme
-    username: ${DBMS_USERNAME:root}
+    password: ${DBMS_PASSWORD}
+    username: ${DBMS_USERNAME}
   jpa:
     hibernate:
       ddl-auto: update
