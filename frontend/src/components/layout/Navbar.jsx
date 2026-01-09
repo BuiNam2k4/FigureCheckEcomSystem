@@ -114,7 +114,9 @@ const Navbar = () => {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <Link to="/dashboard/profile">
+                    <DropdownMenuItem>Profile</DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>Billing</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />

@@ -27,5 +27,7 @@ public class ProductResponse {
     
     // We can include nested objects if we need them, but for snapshot we mostly need basic info & image
     private List<ProductImageResponse> images;
-    // ignoring category, series, manufacturer for now unless needed
+    private CategoryResponse category;
+    private SeriesResponse series;
+    private ManufacturerResponse manufacturer;
 }

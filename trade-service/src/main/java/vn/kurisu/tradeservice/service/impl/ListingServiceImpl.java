@@ -81,7 +81,22 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
     @Override
     public List<ListingResponse> getAllListings() {
         return listingRepository.findAll().stream()
-                .map(listingMapper::toListingResponse)
+                .map(listing -> {
+                    ListingResponse response = listingMapper.toListingResponse(listing);
+                    try {
+                        var productResponse = productClient.getProductById(listing.getProductId());
+                        if (productResponse.getResult() != null) {
+                            var product = productResponse.getResult();
+                            response.setProductName(product.getName());
+                            if(product.getSeries() != null) response.setSeries(product.getSeries().getName());
+                            if(product.getManufacturer() != null) response.setManufacturer(product.getManufacturer().getName());
+                        }
+                    } catch (Exception e) {
+                        // Log error or ignore if product service is down/product missing
+                        response.setProductName("Unknown Product");
+                    }
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 

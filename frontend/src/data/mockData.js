@@ -152,15 +152,106 @@ export const products = [
 
 ];
 
-export const userCart = [
+// Extended User Profile
+export const userProfile = {
+  ...currentUser,
+  phoneNumber: "+84 90 123 4567",
+  address: "123 Anime St, Akihabara District, Tokyo",
+  bio: "Gundam Builder & Fate Series Collector. Always looking for rare Saber figures!",
+  joinDate: "2023-01-15",
+};
+
+export const myOrders = [
   {
-    id: "c1",
-    product: products[0], // One Piece Luffy
-    addedAt: "2024-03-20T10:00:00Z",
+    id: "ORD-7782",
+    date: "2024-03-25",
+    status: "Pending",
+    total: 185.00,
+    items: [
+      {
+        id: "i1",
+        name: "One Piece - Monkey D. Luffy - Gear 5",
+        quantity: 1,
+        price: 180.00,
+        image: products[0].images[0]
+      }
+    ],
+    shippingAddress: "123 Anime St, Akihabara District, Tokyo",
+    paymentMethod: "COD"
   },
   {
-    id: "c2",
-    product: products[1], // Evangelion Asuka
-    addedAt: "2024-03-21T14:30:00Z",
+    id: "ORD-7750",
+    date: "2024-03-10",
+    status: "Shipping",
+    total: 255.00,
+    items: [
+      {
+        id: "i2",
+        name: "Evangelion - Asuka Langley",
+        quantity: 1,
+        price: 240.00,
+        image: products[1].images[0]
+      }
+    ],
+    shippingAddress: "123 Anime St, Akihabara District, Tokyo",
+    paymentMethod: "VNPay"
   },
+  {
+    id: "ORD-7621",
+    date: "2024-02-28",
+    status: "Completed",
+    total: 340.00,
+    items: [
+      {
+        id: "i3",
+        name: "Hatsune Miku - 15th Anniversary",
+        quantity: 1,
+        price: 320.00,
+        image: products[3].images[0]
+      }
+    ],
+    shippingAddress: "123 Anime St, Akihabara District, Tokyo",
+    paymentMethod: "Credit Card"
+  },
+  {
+    id: "ORD-7590",
+    date: "2024-02-15",
+    status: "Cancelled",
+    total: 85.00,
+    items: [
+      {
+        id: "i4",
+        name: "Demon Slayer - Rengoku",
+        quantity: 1,
+        price: 85.00,
+        image: products[2].images[0]
+      }
+    ],
+    shippingAddress: "123 Anime St, Akihabara District, Tokyo",
+    paymentMethod: "COD"
+  },
+  {
+    id: "ORD-7100",
+    date: "2024-01-20",
+    status: "Completed",
+    total: 360.00,
+    items: [
+      {
+        id: "i5",
+        name: "Genshin Impact - Ganyu",
+        quantity: 1,
+        price: 150.00,
+        image: products[4].images[0]
+      },
+      {
+        id: "i6",
+        name: "Jujutsu Kaisen - Gojo",
+        quantity: 1,
+        price: 210.00,
+        image: products[5].images[0]
+      }
+    ],
+    shippingAddress: "123 Anime St, Akihabara District, Tokyo",
+    paymentMethod: "MOMO"
+  }
 ];

@@ -8,8 +8,8 @@ import vn.kurisu.tradeservice.entity.CartItem;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-01-05T20:13:26+0700",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251118-1623, environment: Java 21.0.9 (Eclipse Adoptium)"
+    date = "2026-01-06T22:42:04+0700",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.1 (Oracle Corporation)"
 )
 @Component
 public class CartItemMapperImpl implements CartItemMapper {
@@ -25,10 +25,10 @@ public class CartItemMapperImpl implements CartItemMapper {
 
         CartItemResponse.CartItemResponseBuilder cartItemResponse = CartItemResponse.builder();
 
-        cartItemResponse.createdAt( cartItem.getCreatedAt() );
         cartItemResponse.id( cartItem.getId() );
-        cartItemResponse.listing( listingMapper.toListingResponse( cartItem.getListing() ) );
         cartItemResponse.userId( cartItem.getUserId() );
+        cartItemResponse.listing( listingMapper.toListingResponse( cartItem.getListing() ) );
+        cartItemResponse.createdAt( cartItem.getCreatedAt() );
 
         return cartItemResponse.build();
     }
