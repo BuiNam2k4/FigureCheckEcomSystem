@@ -6,9 +6,12 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import SellerUploadPage from './pages/seller/SellerUploadPage';
-import AdminLayout from './components/admin/AdminLayout';
+import AdminLayout from './components/layout/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VerificationQueue from './pages/admin/VerificationQueue';
+import ProductManagement from './pages/admin/ProductManagement';
+import CategoryManagement from './pages/admin/CategoryManagement';
+import ManufacturerManagement from './pages/admin/ManufacturerManagement';
 import { CartProvider } from './context/CartContext';
 import CartPage from './pages/cart/CartPage';
 import DashboardLayout from './components/layout/DashboardLayout';
@@ -16,6 +19,8 @@ import ProfilePage from './pages/dashboard/ProfilePage';
 import OrdersPage from './pages/dashboard/OrdersPage';
 import CheckoutPage from './pages/checkout/CheckoutPage';
 import BrowsePage from './pages/browse/BrowsePage';
+
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   return (
@@ -43,6 +48,10 @@ function App() {
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
+                <Route path="dashboard" element={<AdminDashboard />} />
+                <Route path="products" element={<ProductManagement />} />
+                <Route path="categories" element={<CategoryManagement />} />
+                <Route path="manufacturers" element={<ManufacturerManagement />} />
                 <Route path="verify" element={<VerificationQueue />} />
               </Route>
   
@@ -50,6 +59,7 @@ function App() {
               <Route path="/sell" element={<div className="container py-8"><SellerUploadPage /></div>} />
             </Routes>
           </Layout>
+          <Toaster />
         </Router>
       </CartProvider>
     </AuthProvider>
