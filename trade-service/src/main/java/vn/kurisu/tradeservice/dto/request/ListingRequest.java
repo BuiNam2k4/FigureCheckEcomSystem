@@ -15,6 +15,7 @@ import java.util.UUID;
 @Builder
 public class ListingRequest {
     private String productId;
+    private String userId;
     private BigDecimal price;
     private int quantity;
     private String condition;

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../../context/AuthContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useDropzone } from 'react-dropzone';
@@ -33,6 +34,14 @@ const formSchema = z.object({
 
 const SellerUploadPage = () => {
     const navigate = useNavigate();
+    const { isAuthenticated, user } = useAuth(); // Assuming useAuth provides user info
+    
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login', { state: { from: '/sell' } });
+        }
+    }, [isAuthenticated, navigate]);
+
     const [images, setImages] = useState([]);
     const [isAiChecking, setIsAiChecking] = useState(false);
     const [aiResult, setAiResult] = useState(null);
@@ -42,6 +51,8 @@ const SellerUploadPage = () => {
     const [manufacturers, setManufacturers] = useState([]);
     const [seriesList, setSeriesList] = useState([]);
     const [categories, setCategories] = useState([]);
+
+    if (!isAuthenticated) return null; // Prevent rendering while redirecting
 
     const form = useForm({
       resolver: zodResolver(formSchema),
@@ -168,6 +179,7 @@ const SellerUploadPage = () => {
           // 4. Create Listing (Trade Service)
           const listingPayload = {
               productId: newProduct.id,
+              userId: user?.id, // Use actual user ID
               price: values.priceMarket, // Using market price as selling price for now
               quantity: 1,
               condition: values.condition.toUpperCase().replace(" ", "_"), // Format to Enum if needed

@@ -1,6 +1,8 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888';
+
 export const fetchProducts = async () => {
   try {
-    const response = await fetch('http://localhost:8888/api/products');
+    const response = await fetch(`${API_BASE_URL}/api/products`);
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
@@ -20,7 +22,7 @@ export const fetchProducts = async () => {
 
 export const fetchProductById = async (id) => {
   try {
-    const response = await fetch(`http://localhost:8888/api/products/${id}`);
+    const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
     if (!response.ok) {
         if (response.status === 404) {
             return null; 
@@ -37,7 +39,7 @@ export const fetchProductById = async (id) => {
 
 export const createProduct = async (productData) => {
   try {
-    const response = await fetch('http://localhost:8888/api/products', {
+    const response = await fetch(`${API_BASE_URL}/api/products`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +61,7 @@ export const createProduct = async (productData) => {
 
 export const updateProduct = async (id, productData) => {
   try {
-    const response = await fetch(`http://localhost:8888/api/products/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(productData),
@@ -75,7 +77,7 @@ export const updateProduct = async (id, productData) => {
 
 export const deleteProduct = async (id) => {
   try {
-    const response = await fetch(`http://localhost:8888/api/products/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
       method: 'DELETE',
     });
     if (!response.ok) throw new Error('Failed to delete product');
@@ -90,7 +92,7 @@ export const deleteProduct = async (id) => {
 
 export const fetchManufacturers = async () => {
     try {
-        const response = await fetch('http://localhost:8888/api/manufacturers');
+        const response = await fetch(`${API_BASE_URL}/api/manufacturers`);
         if (!response.ok) throw new Error('Failed to fetch manufacturers');
         const data = await response.json();
         return data.result;
@@ -102,7 +104,7 @@ export const fetchManufacturers = async () => {
 
 export const createManufacturer = async (data) => {
     try {
-        const response = await fetch('http://localhost:8888/api/manufacturers', {
+        const response = await fetch(`${API_BASE_URL}/api/manufacturers`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -116,7 +118,7 @@ export const createManufacturer = async (data) => {
 
 export const updateManufacturer = async (id, data) => {
     try {
-        const response = await fetch(`http://localhost:8888/api/manufacturers/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/manufacturers/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -130,7 +132,7 @@ export const updateManufacturer = async (id, data) => {
 
 export const deleteManufacturer = async (id) => {
     try {
-        const response = await fetch(`http://localhost:8888/api/manufacturers/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${API_BASE_URL}/api/manufacturers/${id}`, { method: 'DELETE' });
         if (!response.ok) throw new Error('Failed to delete manufacturer');
         return true;
     } catch (error) {
@@ -142,7 +144,7 @@ export const deleteManufacturer = async (id) => {
 
 export const fetchSeries = async () => {
     try {
-        const response = await fetch('http://localhost:8888/api/series');
+        const response = await fetch(`${API_BASE_URL}/api/series`);
         if (!response.ok) throw new Error('Failed to fetch series');
         const data = await response.json();
         return data.result;
@@ -154,7 +156,7 @@ export const fetchSeries = async () => {
 
 export const createSeries = async (data) => {
     try {
-        const response = await fetch('http://localhost:8888/api/series', {
+        const response = await fetch(`${API_BASE_URL}/api/series`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -168,7 +170,7 @@ export const createSeries = async (data) => {
 
 export const updateSeries = async (id, data) => {
     try {
-        const response = await fetch(`http://localhost:8888/api/series/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/series/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -182,7 +184,7 @@ export const updateSeries = async (id, data) => {
 
 export const deleteSeries = async (id) => {
     try {
-        const response = await fetch(`http://localhost:8888/api/series/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${API_BASE_URL}/api/series/${id}`, { method: 'DELETE' });
         if (!response.ok) throw new Error('Failed to delete series');
         return true;
     } catch (error) {
@@ -194,7 +196,7 @@ export const deleteSeries = async (id) => {
 
 export const fetchCategories = async () => {
     try {
-        const response = await fetch('http://localhost:8888/api/categories');
+        const response = await fetch(`${API_BASE_URL}/api/categories`);
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         return data.result;
@@ -206,7 +208,7 @@ export const fetchCategories = async () => {
 
 export const createCategory = async (data) => {
     try {
-        const response = await fetch('http://localhost:8888/api/categories', {
+        const response = await fetch(`${API_BASE_URL}/api/categories`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -220,7 +222,7 @@ export const createCategory = async (data) => {
 
 export const updateCategory = async (id, data) => {
     try {
-        const response = await fetch(`http://localhost:8888/api/categories/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/categories/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -234,7 +236,7 @@ export const updateCategory = async (id, data) => {
 
 export const deleteCategory = async (id) => {
     try {
-        const response = await fetch(`http://localhost:8888/api/categories/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${API_BASE_URL}/api/categories/${id}`, { method: 'DELETE' });
         if (!response.ok) throw new Error('Failed to delete category');
         return true;
     } catch (error) {
@@ -247,7 +249,7 @@ export const uploadImage = async (file) => {
     formData.append('file', file);
 
     try {
-        const response = await fetch('http://localhost:8888/api/products/upload', {
+        const response = await fetch(`${API_BASE_URL}/api/products/upload`, {
             method: 'POST',
             body: formData,
         });

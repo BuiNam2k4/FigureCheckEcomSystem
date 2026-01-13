@@ -46,7 +46,8 @@ const ProfilePage = () => {
              if (token) {
                  try {
                      // Directly calling the API as requested
-                     const response = await fetch('http://localhost:8888/identity/users/my-info', {
+                     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888';
+                     const response = await fetch(`${API_BASE_URL}/identity/users/my-info`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }

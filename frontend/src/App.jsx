@@ -16,6 +16,7 @@ import { CartProvider } from './context/CartContext';
 import CartPage from './pages/cart/CartPage';
 import DashboardLayout from './components/layout/DashboardLayout';
 import ProfilePage from './pages/dashboard/ProfilePage';
+import MyListingsPage from './pages/dashboard/MyListingsPage';
 import OrdersPage from './pages/dashboard/OrdersPage';
 import CheckoutPage from './pages/checkout/CheckoutPage';
 import BrowsePage from './pages/browse/BrowsePage';
@@ -40,6 +41,7 @@ function App() {
               <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<ProfilePage />} /> {/* Default to profile */}
                   <Route path="profile" element={<ProfilePage />} />
+                  <Route path="listings" element={<MyListingsPage></MyListingsPage>} />
                   <Route path="orders" element={<OrdersPage />} />
                   <Route path="address" element={<div className="p-4">Address Book (Coming Soon)</div>} />
                   <Route path="settings" element={<div className="p-4">Settings (Coming Soon)</div>} />

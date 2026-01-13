@@ -7,7 +7,8 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X 
+  X,
+  Tag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '../../context/AuthContext';
@@ -22,6 +23,7 @@ const DashboardLayout = () => {
 
     const menuItems = [
         { path: '/dashboard/profile', icon: User, label: 'My Profile' },
+        { path: '/dashboard/listings', icon: Tag, label: 'My Listings' },
         { path: '/dashboard/orders', icon: Package, label: 'My Orders' },
         { path: '/dashboard/address', icon: MapPin, label: 'Address Book' },
         { path: '/dashboard/settings', icon: Settings, label: 'Settings' },

@@ -25,6 +25,8 @@ import FilterSidebar from '../../components/browse/FilterSidebar';
 import BrowseListingCard from '../../components/browse/BrowseListingCard';
 // import { products } from '../../data/mockData';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888';
+
 const BrowsePage = () => {
     const [viewMode, setViewMode] = useState('grid');
     const [sortBy, setSortBy] = useState('best-match');
@@ -61,9 +63,9 @@ const BrowsePage = () => {
             try {
                 // Fetch Metadata Parallel
                 const [uniqueCats, uniqueMans, uniqueSeries] = await Promise.all([
-                   fetch('http://localhost:8888/api/categories').then(res => res.json()),
-                   fetch('http://localhost:8888/api/manufacturers').then(res => res.json()),
-                   fetch('http://localhost:8888/api/series').then(res => res.json())
+                   fetch(`${API_BASE_URL}/api/categories`).then(res => res.json()),
+                   fetch(`${API_BASE_URL}/api/manufacturers`).then(res => res.json()),
+                   fetch(`${API_BASE_URL}/api/series`).then(res => res.json())
                 ]);
 
                 setMetadata({
@@ -107,7 +109,7 @@ const BrowsePage = () => {
                 params.append('page', filters.page || 1);
                 params.append('size', 12);
 
-                const response = await fetch(`http://localhost:8888/api/listings?${params.toString()}`);
+                const response = await fetch(`${API_BASE_URL}/api/listings?${params.toString()}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch listings');
                 }

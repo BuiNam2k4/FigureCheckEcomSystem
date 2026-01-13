@@ -28,6 +28,12 @@ public class Listing {
     @Column(name = "product_id", nullable = false)
     private UUID productId;
 
+    @Column(name = "product_name")
+    private String productName;
+
+    @Column(name = "product_thumbnail")
+    private String productThumbnail;
+
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal price;
 

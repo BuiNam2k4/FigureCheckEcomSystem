@@ -32,29 +32,28 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Link to={`/product/${id}`}>
-      <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
-        <div className="relative aspect-square overflow-hidden bg-muted">
+    <Link to={`/product/${id}`} className="block h-full pt-8 group">
+      <Card className="h-full overflow-visible relative transition-all duration-300 hover:shadow-xl hover:border-primary/50">
+        <div className="relative aspect-square -mt-8 mx-4 rounded-xl overflow-hidden bg-background shadow-lg border group-hover:scale-105 transition-transform duration-300">
           <img 
             src={images[0]?.imageUrl || images[0]} 
             alt={name} 
-            className="object-contain w-full h-full transition-transform duration-300 group-hover:scale-105 p-2"
+            className="object-contain w-full h-full p-2 bg-white" 
             loading="lazy"
           />
           {getStatusBadge(aiAnalysis?.status)}
         </div>
         
-        <CardContent className="p-4">
-          <div className="text-xs text-muted-foreground mb-1">{condition}</div>
-          <h3 className="font-semibold line-clamp-2 min-h-[3rem] mb-2 group-hover:text-primary transition-colors">
+        <CardContent className="p-4 pt-6 text-center">
+          <div className="text-xs text-muted-foreground mb-1 uppercase tracking-wider font-semibold">{condition}</div>
+          <h3 className="font-bold text-lg line-clamp-1 mb-2 group-hover:text-primary transition-colors">
             {name}
           </h3>
-          <div className="flex items-baseline gap-1">
-            <span className="text-xl font-bold">${priceMarket}</span>
-            <span className="text-xs text-muted-foreground">USD</span>
+          <div className="flex items-center justify-center gap-2">
+            <span className="text-xl font-extrabold text-primary">${priceMarket}</span>
+            <span className="text-xs text-muted-foreground font-medium bg-muted px-1.5 py-0.5 rounded">USD</span>
           </div>
         </CardContent>
-        {/* Footer could overlap or be omitted for cleaner look */}
       </Card>
     </Link>
   );

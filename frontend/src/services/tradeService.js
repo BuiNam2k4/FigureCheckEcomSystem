@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8888/api';
+const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888') + '/api';
 
 export const createListing = async (listingData) => {
   try {
@@ -139,6 +139,24 @@ export const getOrder = async (orderId) => {
     return data.result;
   } catch (error) {
     console.error("Fetch order failed:", error);
+    throw error;
+  }
+};
+
+export const deleteListing = async (listingId) => {
+  try {
+    const response = await fetch(`${API_URL}/listings/${listingId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete listing');
+    }
+    const data = await response.json();
+    return data.result;
+  } catch (error) {
+    console.error("Delete listing failed:", error);
     throw error;
   }
 };

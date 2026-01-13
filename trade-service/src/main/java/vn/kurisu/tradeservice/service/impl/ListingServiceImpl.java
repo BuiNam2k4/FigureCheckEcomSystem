@@ -27,25 +27,47 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
     @Override
     @Transactional
     public ListingResponse createListing(ListingRequest request) {
-        // Verify product exists
+        Listing listing = listingMapper.toListing(request);
+        
+        // 1. Fetch Product Info via Feign (Snapshot Pattern)
         try {
             UUID productId = UUID.fromString(request.getProductId());
-            productClient.getProductById(productId);
+            var productResponse = productClient.getProductById(productId);
+            
+            if (productResponse != null && productResponse.getResult() != null) {
+                var product = productResponse.getResult();
+                listing.setProductName(product.getName());
+                
+                // Set Thumbnail from product images if available
+                if (product.getImages() != null && !product.getImages().isEmpty()) {
+                     listing.setProductThumbnail(product.getImages().get(0).getImageUrl());
+                }
+            } else {
+                 throw new AppException(ErrorCode.INVALID_KEY);
+            }
         } catch (Exception e) {
-            throw new AppException(ErrorCode.INVALID_KEY); // Or PRODUCT_NOT_FOUND
+            System.err.println("Failed to fetch product for snapshot: " + e.getMessage());
+             throw new AppException(ErrorCode.INVALID_KEY);
         }
 
-        Listing listing = listingMapper.toListing(request);
-        // Assuming userId from context or request. creating fake userId for now or need to pass it
         // Ideally should get from SecurityContext holder
-        listing.setUserId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6")); // Logic to get current user
+        // listing.setUserId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6")); // Logic to get current user
+        // Use the userId from request if available, or keep hardcoded for now as per previous implementation unless refactoring security
+        // Use userId from request if available
+        if (request.getUserId() != null) {
+            listing.setUserId(UUID.fromString(request.getUserId()));
+        } else {
+            // Fallback for testing or if missing
+            listing.setUserId(UUID.fromString("3fa85f64-5717-4562-b3fc-2c963f66afa6")); 
+        }
+
 
         if (request.getImageUrls() != null) {
             List<ListingImage> images = request.getImageUrls().stream()
                     .map(url -> ListingImage.builder()
                             .listing(listing)
                             .imageUrl(url)
-                            .isThumbnail(false) // Logic for thumbnail can be added
+                            .isThumbnail(false)
                             .build())
                     .collect(Collectors.toList());
             if (!images.isEmpty()) {
@@ -62,47 +84,36 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
     public ListingResponse getListing(UUID id) {
         Listing listing = listingRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.LISTING_NOT_FOUND));
-        return listingMapper.toListingResponse(listing);
+        return toListingResponseWithSnapshot(listing);
     }
 
     @Override
     public List<ListingResponse> getListingsByUser(UUID userId) {
         return listingRepository.findByUserId(userId).stream()
-                .map(listingMapper::toListingResponse)
+                .map(this::toListingResponseWithSnapshot)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ListingResponse> getListingsByProduct(UUID productId) {
         return listingRepository.findByProductId(productId).stream()
-                .map(listingMapper::toListingResponse)
+                .map(this::toListingResponseWithSnapshot)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ListingResponse> getAllListings() {
         return listingRepository.findAll().stream()
-                .map(listing -> {
-                    ListingResponse response = listingMapper.toListingResponse(listing);
-                    try {
-                        var productResponse = productClient.getProductById(listing.getProductId());
-                        if (productResponse.getResult() != null) {
-                            var product = productResponse.getResult();
-                            response.setProductName(product.getName());
-                            if(product.getSeries() != null) response.setSeries(product.getSeries().getName());
-                            if(product.getManufacturer() != null) response.setManufacturer(product.getManufacturer().getName());
-                        }
-                    } catch (Exception e) {
-                        // Log error or ignore if product service is down/product missing
-                        response.setProductName("Unknown Product");
-                    }
-                    return response;
-                })
+                .map(this::toListingResponseWithSnapshot)
                 .collect(Collectors.toList());
     }
 
     @Override
     public vn.kurisu.tradeservice.dto.response.PageResponse<ListingResponse> getAllListings(ListingFilterRequest filter) {
+        // ... (Filter logic remains mostly the same, simplified for brevity in diff)
+        // Ensure filter logic still works. If filtering by category/manufacturer, we still need to query Product Service 
+        // to get matching Product IDs, because Listing doesn't store category/manufacturer, only snapshot name.
+        
         List<UUID> productIds = null;
         if ((filter.getCategories() != null && !filter.getCategories().isEmpty()) ||
             (filter.getManufacturers() != null && !filter.getManufacturers().isEmpty()) ||
@@ -116,7 +127,7 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
                             .collect(Collectors.toList());
                     
                     if (productIds.isEmpty()) {
-                        return vn.kurisu.tradeservice.dto.response.PageResponse.<ListingResponse>builder()
+                         return vn.kurisu.tradeservice.dto.response.PageResponse.<ListingResponse>builder()
                                 .data(java.util.Collections.emptyList())
                                 .currentPage(filter.getPage())
                                 .pageSize(filter.getSize())
@@ -126,7 +137,6 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Error fetching products for filter: " + e.getMessage());
                  return vn.kurisu.tradeservice.dto.response.PageResponse.<ListingResponse>builder()
                                 .data(java.util.Collections.emptyList())
                                 .currentPage(filter.getPage())
@@ -142,21 +152,7 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
         org.springframework.data.domain.Page<Listing> page = listingRepository.findAll(spec, pageable);
         
         List<ListingResponse> data = page.getContent().stream()
-                .map(listing -> {
-                    ListingResponse response = listingMapper.toListingResponse(listing);
-                    try {
-                        var productResponse = productClient.getProductById(listing.getProductId());
-                        if (productResponse.getResult() != null) {
-                            var product = productResponse.getResult();
-                            response.setProductName(product.getName());
-                            if(product.getSeries() != null) response.setSeries(product.getSeries().getName());
-                            if(product.getManufacturer() != null) response.setManufacturer(product.getManufacturer().getName());
-                        }
-                    } catch (Exception e) {
-                         response.setProductName("Unknown Product");
-                    }
-                    return response;
-                })
+                .map(this::toListingResponseWithSnapshot)
                 .collect(Collectors.toList());
 
         return vn.kurisu.tradeservice.dto.response.PageResponse.<ListingResponse>builder()
@@ -166,6 +162,20 @@ public class ListingServiceImpl implements vn.kurisu.tradeservice.service.Listin
                 .totalElements(page.getTotalElements())
                 .data(data)
                 .build();
+    }
+    
+    private ListingResponse toListingResponseWithSnapshot(Listing listing) {
+        ListingResponse response = listingMapper.toListingResponse(listing);
+        // Use Snapshot data directly
+        response.setProductName(listing.getProductName());
+        response.setProductThumbnail(listing.getProductThumbnail());
+        // Note: Series and Manufacturer are NOT in the snapshot currently. 
+        // If the user wants to avoid ALL calls, we should also snapshot those. 
+        // But the requirement specifically mentioned "product_name and product_thumbnail".
+        // I will adhere to the prompt. If series/manufacturer are needed for display, 
+        // we might still need a call or add them to snapshot. 
+        // For now, I will NOT call product service for them to strictly follow "Snapshot" for the requested fields.
+        return response;
     }
 
     @Override

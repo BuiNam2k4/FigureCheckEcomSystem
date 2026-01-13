@@ -1,0 +1,40 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< vn.kurisu:trade-service >-----------------------
+[INFO] Building trade-service 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.3.0:run (default-cli) > test-compile @ trade-service >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ trade-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ trade-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ trade-service ---
+[INFO] skip non existing resourceDirectory C:\Users\Long Phung\OneDrive\Documents\DOAnCHuyenNganh\Microservice-FYB\trade-service\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ trade-service ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.3.0:run (default-cli) < test-compile @ trade-service <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.3.0:run (default-cli) @ trade-service ---
+[INFO] Attaching agents: []
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  24.240 s
+[INFO] Finished at: 2026-01-10T23:59:00+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.0:run (default-cli) on project trade-service: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

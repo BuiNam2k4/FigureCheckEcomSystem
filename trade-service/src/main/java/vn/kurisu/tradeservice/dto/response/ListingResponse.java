@@ -25,6 +25,7 @@ public class ListingResponse {
     private String description;
     private String status;
     private String productName;
+    private String productThumbnail;
     private String series;
     private String manufacturer;
     private List<ListingImageResponse> images;

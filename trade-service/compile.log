@@ -1,0 +1,26 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< vn.kurisu:trade-service >-----------------------
+[INFO] Building trade-service 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ trade-service ---
+[INFO] Deleting C:\Users\Long Phung\OneDrive\Documents\DOAnCHuyenNganh\Microservice-FYB\trade-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ trade-service ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ trade-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 45 source files with javac [debug parameters release 17] to target\classes
+[WARNING] /C:/Users/Long Phung/OneDrive/Documents/DOAnCHuyenNganh/Microservice-FYB/trade-service/src/main/java/vn/kurisu/tradeservice/mapper/ListingMapper.java:[19,13] Unmapped target properties: "productName, productThumbnail".
+[WARNING] /C:/Users/Long Phung/OneDrive/Documents/DOAnCHuyenNganh/Microservice-FYB/trade-service/src/main/java/vn/kurisu/tradeservice/mapper/ListingMapper.java:[21,21] Unmapped target properties: "series, manufacturer".
+[WARNING] /C:/Users/Long Phung/OneDrive/Documents/DOAnCHuyenNganh/Microservice-FYB/trade-service/src/main/java/vn/kurisu/tradeservice/mapper/ListingMapper.java:[23,26] Unmapped target property: "isThumbnail".
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  20.615 s
+[INFO] Finished at: 2026-01-10T23:58:10+07:00
+[INFO] ------------------------------------------------------------------------

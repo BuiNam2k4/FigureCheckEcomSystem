@@ -13,8 +13,8 @@ import vn.kurisu.tradeservice.entity.ListingImage;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-01-09T22:20:34+0700",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.45.0.v20260101-2150, environment: Java 21.0.9 (Eclipse Adoptium)"
+    date = "2026-01-10T23:58:03+0700",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.1 (Oracle Corporation)"
 )
 @Component
 public class ListingMapperImpl implements ListingMapper {
@@ -27,13 +27,13 @@ public class ListingMapperImpl implements ListingMapper {
 
         Listing.ListingBuilder listing = Listing.builder();
 
-        listing.condition( request.getCondition() );
-        listing.description( request.getDescription() );
-        listing.price( request.getPrice() );
         if ( request.getProductId() != null ) {
             listing.productId( UUID.fromString( request.getProductId() ) );
         }
+        listing.price( request.getPrice() );
         listing.quantity( request.getQuantity() );
+        listing.condition( request.getCondition() );
+        listing.description( request.getDescription() );
 
         return listing.build();
     }
@@ -46,17 +46,19 @@ public class ListingMapperImpl implements ListingMapper {
 
         ListingResponse.ListingResponseBuilder listingResponse = ListingResponse.builder();
 
-        listingResponse.condition( listing.getCondition() );
-        listingResponse.createdAt( listing.getCreatedAt() );
-        listingResponse.description( listing.getDescription() );
         listingResponse.id( listing.getId() );
-        listingResponse.images( listingImageListToListingImageResponseList( listing.getImages() ) );
-        listingResponse.price( listing.getPrice() );
-        listingResponse.productId( listing.getProductId() );
-        listingResponse.quantity( listing.getQuantity() );
-        listingResponse.status( listing.getStatus() );
-        listingResponse.updatedAt( listing.getUpdatedAt() );
         listingResponse.userId( listing.getUserId() );
+        listingResponse.productId( listing.getProductId() );
+        listingResponse.price( listing.getPrice() );
+        listingResponse.quantity( listing.getQuantity() );
+        listingResponse.condition( listing.getCondition() );
+        listingResponse.description( listing.getDescription() );
+        listingResponse.status( listing.getStatus() );
+        listingResponse.productName( listing.getProductName() );
+        listingResponse.productThumbnail( listing.getProductThumbnail() );
+        listingResponse.images( listingImageListToListingImageResponseList( listing.getImages() ) );
+        listingResponse.createdAt( listing.getCreatedAt() );
+        listingResponse.updatedAt( listing.getUpdatedAt() );
 
         return listingResponse.build();
     }
