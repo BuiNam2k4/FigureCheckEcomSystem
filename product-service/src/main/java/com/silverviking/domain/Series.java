@@ -19,6 +19,13 @@ public class Series {
     @Column(nullable = false)
     private String name;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manufacturer_id")
+    private Manufacturer manufacturer;
+
     @OneToMany(mappedBy = "series")
     private List<Product> products;
 }

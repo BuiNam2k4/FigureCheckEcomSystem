@@ -4,6 +4,8 @@ import com.silverviking.domain.Series;
 import com.silverviking.dto.request.SeriesRequest;
 import com.silverviking.dto.response.SeriesResponse;
 import com.silverviking.exception.EntityNotFoundException;
+import com.silverviking.domain.Manufacturer;
+import com.silverviking.repository.ManufacturerRepository; // Assuming this exists in the same package or imported
 import com.silverviking.repository.SeriesRepository;
 import com.silverviking.service.SeriesService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class SeriesServiceImpl implements SeriesService {
 
     private final SeriesRepository seriesRepository;
+    private final ManufacturerRepository manufacturerRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -38,8 +41,16 @@ public class SeriesServiceImpl implements SeriesService {
     @Override
     @Transactional
     public SeriesResponse createSeries(SeriesRequest request) {
+        Manufacturer manufacturer = null;
+        if (request.getManufacturerId() != null) {
+            manufacturer = manufacturerRepository.findById(request.getManufacturerId())
+                    .orElseThrow(() -> new EntityNotFoundException("Manufacturer not found with id: " + request.getManufacturerId()));
+        }
+
         Series series = Series.builder()
                 .name(request.getName())
+                .description(request.getDescription())
+                .manufacturer(manufacturer)
                 .build();
         Series saved = seriesRepository.save(series);
         return mapToResponse(saved);
@@ -52,6 +63,13 @@ public class SeriesServiceImpl implements SeriesService {
                 .orElseThrow(() -> new EntityNotFoundException("Series not found with id: " + id));
         
         series.setName(request.getName());
+        series.setDescription(request.getDescription());
+
+        if (request.getManufacturerId() != null) {
+             Manufacturer manufacturer = manufacturerRepository.findById(request.getManufacturerId())
+                    .orElseThrow(() -> new EntityNotFoundException("Manufacturer not found with id: " + request.getManufacturerId()));
+             series.setManufacturer(manufacturer);
+        }
         
         Series updated = seriesRepository.save(series);
         return mapToResponse(updated);
@@ -69,17 +87,17 @@ public class SeriesServiceImpl implements SeriesService {
     @Override
     @Transactional(readOnly = true)
     public List<SeriesResponse> getSeriesByManufacturerId(Long manufacturerId) {
-       // Series no longer belongs to Manufacturer directly
-       // This method should be removed or deprecated. 
-       // For now returning empty list or throwing unsupported.
-       // User schema implies decoupling.
-       return List.of();
+        return seriesRepository.findByManufacturerId(manufacturerId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
     private SeriesResponse mapToResponse(Series series) {
         return SeriesResponse.builder()
                 .id(series.getId())
                 .name(series.getName())
+                .description(series.getDescription())
+                .manufacturerId(series.getManufacturer() != null ? series.getManufacturer().getId() : null)
                 .build();
     }
 }

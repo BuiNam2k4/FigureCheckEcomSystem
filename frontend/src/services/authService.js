@@ -66,3 +66,28 @@ export const register = async (userData) => {
         throw error;
     }
 };
+
+export const updateUser = async (id, userData) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE_URL}/identity/users/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(userData),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Update failed');
+        }
+
+        const data = await response.json();
+        return data.result;
+    } catch (error) {
+        console.error("Update user service error:", error);
+        throw error;
+    }
+};

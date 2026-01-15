@@ -8,4 +8,6 @@ import lombok.Data;
 public class SeriesResponse {
     private Long id;
     private String name;
+    private String description;
+    private Long manufacturerId;
 }

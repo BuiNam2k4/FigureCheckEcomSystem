@@ -9,4 +9,7 @@ public class ManufacturerRequest {
     private String name;
     
     private String originCountry;
+    private String description;
+    private String logoUrl;
+    private String website;
 }

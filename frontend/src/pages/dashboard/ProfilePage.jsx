@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Camera, ExternalLink } from 'lucide-react';
 import { userProfile } from '../../data/mockData';
 import { useAuth } from '../../context/AuthContext';
+import { uploadImage } from '../../services/productService';
+import { updateUser } from '../../services/authService';
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -22,8 +24,10 @@ const profileSchema = z.object({
 const ProfilePage = () => {
     const { user } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    
     const [isLoading, setIsLoading] = useState(true);
+    const fileInputRef = React.useRef(null);
+    const [uploading, setUploading] = useState(false);
+    const [avatarUrl, setAvatarUrl] = useState(userProfile.avatar); // Default mock
 
     // Initial default values (will be updated after fetch)
     const initialDefaults = {
@@ -33,38 +37,38 @@ const ProfilePage = () => {
         phoneNumber: userProfile.phoneNumber, 
         bio: userProfile.bio,
     };
-
+    
+    // ... useForm ...
     const form = useForm({
         resolver: zodResolver(profileSchema),
         defaultValues: initialDefaults,
     });
 
-    // Fetch latest user info from API on mount
+    // Update the loadUserProfile effect to set avatarUrl
     React.useEffect(() => {
         const loadUserProfile = async () => {
              const token = localStorage.getItem('token');
              if (token) {
                  try {
-                     // Directly calling the API as requested
                      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8888';
                      const response = await fetch(`${API_BASE_URL}/identity/users/my-info`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
+                        headers: { 'Authorization': `Bearer ${token}` }
                      });
                      if (response.ok) {
                          const data = await response.json();
                          const apiUser = data.result;
                          
-                         // Update form with API data
                          form.reset({
                              firstName: apiUser.firstName || "",
                              lastName: apiUser.lastName || "",
-                             email: apiUser.email || apiUser.username || "", // Username is often email in this system
-                             phoneNumber: userProfile.phoneNumber, // Keep mock for now as API doesn't have it
-                             bio: userProfile.bio, // Keep mock for now
+                             email: apiUser.email || apiUser.username || "",
+                             phoneNumber: userProfile.phoneNumber,
+                             bio: userProfile.bio,
                          });
-                         console.log("Profile loaded from API:", apiUser);
+                         // Set avatar from API or fallback to mock
+                         if (apiUser.avatarUrl) {
+                             setAvatarUrl(apiUser.avatarUrl);
+                         }
                      }
                  } catch (error) {
                      console.error("Failed to load profile from API", error);
@@ -85,8 +89,39 @@ const ProfilePage = () => {
     };
 
     const handlePhotoUpload = () => {
-        // Simulate file input click
-        alert("This would open file selection dialog.");
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setUploading(true);
+            // 1. Upload to Cloudinary via Product Service
+            const uploadedImageUrl = await uploadImage(file);
+            
+            // 2. Update User Profile in Identity Service
+            if (user?.id) {
+                 await updateUser(user.id, {
+                     avatarUrl: uploadedImageUrl
+                     // Note: Ideally we should send other fields too if the API requires full update, 
+                     // but assuming PATCH-like behavior or ignoring missing fields for now based on DTO.
+                     // If it overrides nulls, we might need to fetch current state first.
+                     // The generic UserUpdateRequest has other fields optional.
+                 });
+            }
+
+            // 3. Update UI
+            setAvatarUrl(uploadedImageUrl);
+            alert("Avatar updated successfully!");
+
+        } catch (error) {
+            console.error("Avatar update failed:", error);
+            alert("Failed to update avatar.");
+        } finally {
+            setUploading(false);
+        }
     };
 
     return (
@@ -95,18 +130,28 @@ const ProfilePage = () => {
             
             {/* Avatar Section */}
             <div className="mb-8 flex items-center gap-6">
+                <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleFileChange}
+                />
                 <div className="relative">
                     <Avatar className="h-24 w-24">
-                        <AvatarImage src={userProfile.avatar} alt="Profile" />
+                        <AvatarImage src={avatarUrl} alt="Profile" />
+                        <AvatarFallback>
                             {initialDefaults.firstName?.[0]}{initialDefaults.lastName?.[0]}
+                        </AvatarFallback>
                     </Avatar>
                     <Button 
                         size="icon" 
                         variant="ghost" 
                         className="absolute bottom-0 right-0 rounded-full bg-background border shadow-sm h-8 w-8"
                         onClick={handlePhotoUpload}
+                        disabled={uploading}
                     >
-                        <Camera className="h-4 w-4" />
+                        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
                     </Button>
                 </div>
                 <div>
@@ -114,8 +159,8 @@ const ProfilePage = () => {
                     <p className="text-sm text-muted-foreground mt-1 mb-2">
                         We recommend an image of at least 400x400px.
                     </p>
-                    <Button variant="outline" size="sm" onClick={handlePhotoUpload}>
-                        Change Photo
+                    <Button variant="outline" size="sm" onClick={handlePhotoUpload} disabled={uploading}>
+                        {uploading ? "Uploading..." : "Change Photo"}
                     </Button>
                 </div>
             </div>

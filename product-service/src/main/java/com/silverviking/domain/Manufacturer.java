@@ -22,4 +22,12 @@ public class Manufacturer {
 
     @Column(name = "origin_country")
     private String originCountry;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "logo_url")
+    private String logoUrl;
+
+    private String website;
 }

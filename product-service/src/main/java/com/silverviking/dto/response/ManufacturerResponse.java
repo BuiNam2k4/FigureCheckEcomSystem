@@ -9,4 +9,7 @@ public class ManufacturerResponse {
     private Long id;
     private String name;
     private String originCountry;
+    private String description;
+    private String logoUrl;
+    private String website;
 }

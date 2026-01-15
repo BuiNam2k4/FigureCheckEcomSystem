@@ -41,6 +41,9 @@ public class ManufacturerServiceImpl implements ManufacturerService {
         Manufacturer manufacturer = Manufacturer.builder()
                 .name(request.getName())
                 .originCountry(request.getOriginCountry())
+                .description(request.getDescription())
+                .logoUrl(request.getLogoUrl())
+                .website(request.getWebsite())
                 .build();
         Manufacturer saved = manufacturerRepository.save(manufacturer);
         return mapToResponse(saved);
@@ -54,6 +57,9 @@ public class ManufacturerServiceImpl implements ManufacturerService {
         
         manufacturer.setName(request.getName());
         manufacturer.setOriginCountry(request.getOriginCountry());
+        manufacturer.setDescription(request.getDescription());
+        manufacturer.setLogoUrl(request.getLogoUrl());
+        manufacturer.setWebsite(request.getWebsite());
         
         Manufacturer updated = manufacturerRepository.save(manufacturer);
         return mapToResponse(updated);
@@ -73,6 +79,9 @@ public class ManufacturerServiceImpl implements ManufacturerService {
                 .id(manufacturer.getId())
                 .name(manufacturer.getName())
                 .originCountry(manufacturer.getOriginCountry())
+                .description(manufacturer.getDescription())
+                .logoUrl(manufacturer.getLogoUrl())
+                .website(manufacturer.getWebsite())
                 .build();
     }
 }
