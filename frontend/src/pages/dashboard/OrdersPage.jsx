@@ -7,9 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { Package, ChevronRight, Clock, CheckCircle, XCircle, Truck } from 'lucide-react';
 import { myOrders } from '../../data/mockData';
 
+import ReviewModal from '@/components/ReviewModal';
+
 const OrdersPage = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [activeTab, setActiveTab] = useState("all");
+    const [reviewOrderId, setReviewOrderId] = useState(null);
 
     const getStatusColor = (status) => {
         switch(status.toLowerCase()) {
@@ -82,6 +85,11 @@ const OrdersPage = () => {
                                         <Button variant="outline" size="sm" onClick={() => setSelectedOrder(order)}>
                                             View Details
                                         </Button>
+                                        {order.status.toLowerCase() === 'completed' && (
+                                            <Button variant="default" size="sm" onClick={() => setReviewOrderId(order.id)}>
+                                                Leave Review
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="p-6">
@@ -175,6 +183,13 @@ const OrdersPage = () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Review Modal */}
+            <ReviewModal 
+                isOpen={!!reviewOrderId} 
+                onClose={() => setReviewOrderId(null)} 
+                orderId={reviewOrderId}
+            />
         </div>
     );
 };

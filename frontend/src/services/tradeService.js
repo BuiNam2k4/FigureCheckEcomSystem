@@ -160,3 +160,49 @@ export const deleteListing = async (listingId) => {
     throw error;
   }
 };
+
+export const createReview = async (reviewData) => {
+  try {
+    const response = await fetch(`${API_URL}/reviews`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(reviewData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to submit review');
+    }
+    const data = await response.json();
+    return data.result;
+  } catch (error) {
+    console.error("Create review failed:", error);
+    throw error;
+  }
+};
+
+export const getReviewsReceivedByUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/reviews/users/${userId}`);
+    if (!response.ok) throw new Error('Failed to fetch reviews');
+    const data = await response.json();
+    return data.result;
+  } catch (error) {
+    console.error("Fetch reviews failed:", error);
+    throw error;
+  }
+};
+
+export const getUserReputation = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/reviews/users/${userId}/reputation`);
+    if (!response.ok) throw new Error('Failed to fetch reputation');
+    const data = await response.json();
+    return data.result;
+  } catch (error) {
+    console.error("Fetch reputation failed:", error);
+    throw error;
+  }
+};

@@ -7,11 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, Camera, ExternalLink } from 'lucide-react';
+import { Loader2, Camera, ExternalLink, Star, ShieldCheck } from 'lucide-react';
 import { userProfile } from '../../data/mockData';
 import { useAuth } from '../../context/AuthContext';
 import { uploadImage } from '../../services/productService';
 import { updateUser } from '../../services/authService';
+import { getUserReputation } from '../../services/tradeService';
 
 const profileSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -28,6 +29,7 @@ const ProfilePage = () => {
     const fileInputRef = React.useRef(null);
     const [uploading, setUploading] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState(userProfile.avatar); // Default mock
+    const [reputation, setReputation] = useState(0);
 
     // Initial default values (will be updated after fetch)
     const initialDefaults = {
@@ -44,7 +46,7 @@ const ProfilePage = () => {
         defaultValues: initialDefaults,
     });
 
-    // Update the loadUserProfile effect to set avatarUrl
+    // Update the loadUserProfile effect to set avatarUrl and reputation
     React.useEffect(() => {
         const loadUserProfile = async () => {
              const token = localStorage.getItem('token');
@@ -68,6 +70,16 @@ const ProfilePage = () => {
                          // Set avatar from API or fallback to mock
                          if (apiUser.avatarUrl) {
                              setAvatarUrl(apiUser.avatarUrl);
+                         }
+
+                         // Fetch Reputation
+                         if (apiUser.id) {
+                            try {
+                                const score = await getUserReputation(apiUser.id);
+                                setReputation(score);
+                            } catch (err) {
+                                console.error("Failed to fetch reputation", err);
+                            }
                          }
                      }
                  } catch (error) {
@@ -105,10 +117,6 @@ const ProfilePage = () => {
             if (user?.id) {
                  await updateUser(user.id, {
                      avatarUrl: uploadedImageUrl
-                     // Note: Ideally we should send other fields too if the API requires full update, 
-                     // but assuming PATCH-like behavior or ignoring missing fields for now based on DTO.
-                     // If it overrides nulls, we might need to fetch current state first.
-                     // The generic UserUpdateRequest has other fields optional.
                  });
             }
 
@@ -159,6 +167,16 @@ const ProfilePage = () => {
                     <p className="text-sm text-muted-foreground mt-1 mb-2">
                         We recommend an image of at least 400x400px.
                     </p>
+                    <div className="flex items-center gap-4 mb-3">
+                         <div className="flex items-center gap-1 bg-yellow-500/10 text-yellow-500 px-2 py-1 rounded text-sm font-medium">
+                            <Star className="w-3.5 h-3.5 fill-current" />
+                            {reputation > 0 ? reputation : "New"}
+                         </div>
+                         <div className="flex items-center gap-1 text-green-500 text-sm">
+                            <ShieldCheck className="w-3.5 h-3.5" />
+                            Verified
+                         </div>
+                    </div>
                     <Button variant="outline" size="sm" onClick={handlePhotoUpload} disabled={uploading}>
                         {uploading ? "Uploading..." : "Change Photo"}
                     </Button>

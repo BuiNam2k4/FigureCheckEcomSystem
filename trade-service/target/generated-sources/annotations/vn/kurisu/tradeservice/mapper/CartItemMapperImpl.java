@@ -8,7 +8,7 @@ import vn.kurisu.tradeservice.entity.CartItem;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-01-10T23:58:02+0700",
+    date = "2026-01-15T22:24:31+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.1 (Oracle Corporation)"
 )
 @Component

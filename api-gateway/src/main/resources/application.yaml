@@ -28,7 +28,7 @@ spring:
         - id: trade-service-route
           uri: lb://TRADE-SERVICE
           predicates:
-            - Path=/api/listings/**, /api/cart/**, /api/orders/**
+            - Path=/api/listings/**, /api/cart/**, /api/orders/**, /api/reviews/**
 
         # Route: Product Service
         - id: product-service-route

@@ -2,13 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="021303d4-17cb-4cac-80bf-09ce3b1e52c6" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/dashboard/OrdersPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/dashboard/OrdersPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/dashboard/ProfilePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/dashboard/ProfilePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/services/tradeService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/tradeService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/configuration/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/configuration/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/request/UserCreationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/request/UserCreationRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/request/UserUpdateRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/request/UserUpdateRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/response/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/dto/response/UserResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/mapper/UserMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/java/com/devteria/identityservice/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/identity-service/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/identity-service/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trade-service/target/generated-sources/annotations/vn/kurisu/tradeservice/mapper/CartItemMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/trade-service/target/generated-sources/annotations/vn/kurisu/tradeservice/mapper/CartItemMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trade-service/target/generated-sources/annotations/vn/kurisu/tradeservice/mapper/ListingMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/trade-service/target/generated-sources/annotations/vn/kurisu/tradeservice/mapper/ListingMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trade-service/target/generated-sources/annotations/vn/kurisu/tradeservice/mapper/OrderMapperImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/trade-service/target/generated-sources/annotations/vn/kurisu/tradeservice/mapper/OrderMapperImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trade-service/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/trade-service/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/trade-service/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/trade-service/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,9 +30,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="381S0ZK4gJftwWg0yW0mslHWrhU" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -31,7 +43,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "trade",
+    "git-widget-placeholder": "deploy",
     "last_opened_file_path": "C:/Users/Long Phung/OneDrive/Documents/DOAnCHuyenNganh/Microservice-FYB"
   }
 }]]></component>
